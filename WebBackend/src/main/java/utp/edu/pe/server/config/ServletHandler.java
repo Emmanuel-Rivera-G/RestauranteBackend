@@ -16,8 +16,8 @@ import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_404;
 import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405;
-import static utp.edu.pe.server.constants.HttpCode.ERROR_CODE_404;
-import static utp.edu.pe.server.constants.HttpCode.ERROR_CODE_405;
+import static utp.edu.pe.server.constants.HttpStatusCode.ERROR_CODE_404;
+import static utp.edu.pe.server.constants.HttpStatusCode.ERROR_CODE_405;
 import static utp.edu.pe.server.constants.SourceContent.SOURCE;
 import utp.edu.pe.utils.LoggerCreator;
 
@@ -59,6 +59,7 @@ public class ServletHandler implements HttpHandler {
         path = (path.startsWith(this.contextPath)) ?
                 path.substring(this.contextPath.length()) :
                 path;
+        if (path.compareTo("") == 0) path = "/";
         HttpServletBasic servlet = servlets.get(path);
         
         if (servlet != null) {
@@ -188,12 +189,12 @@ public class ServletHandler implements HttpHandler {
     }
 
     private String sourcePathArchive(String archive) {
-        return this.sourcePathArchive(archive, null);
+        return this.sourcePathArchive(archive, new String[]{});
     }
 
     private String sourcePathArchive(String archive, String ...carpetas) {
         String result = webSource;
-        if (carpetas == null) {
+        if (carpetas.length <= 0) {
             result += archive;
             return result;
         }

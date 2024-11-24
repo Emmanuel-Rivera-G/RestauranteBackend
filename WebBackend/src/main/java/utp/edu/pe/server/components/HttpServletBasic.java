@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import static utp.edu.pe.utils.LoggerCreator.getLogger;
-import static utp.edu.pe.server.constants.HttpCode.ERROR_CODE_405;
+import static utp.edu.pe.server.constants.HttpStatusCode.ERROR_CODE_405;
 import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405_GET;
 import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405_POST;
 
