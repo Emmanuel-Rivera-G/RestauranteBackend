@@ -12,20 +12,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
-import utp.edu.pe.utils.LoggerCreator;
+import static utp.edu.pe.utils.LoggerCreator.getLogger;
+import static utp.edu.pe.server.constants.HttpCode.ERROR_CODE_405;
+import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405_GET;
+import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405_POST;
 
 public abstract class HttpServletBasic {
     
-    private final Logger LOGGER = LoggerCreator.getLogger(HttpServletBasic.class);
+    private final Logger LOGGER = getLogger(HttpServletBasic.class);
     
     private final Gson gson = new Gson();
     
     public void doGet(HttpExchange exchange) throws IOException {
-        sendResponse(exchange, 405, "<h1>Method GET not allowed</h1>");
+        sendResponse(exchange, ERROR_CODE_405.getCode(), ERROR_FALLBACK_405_GET.getFallBack());
     }
 
     public void doPost(HttpExchange exchange) throws IOException {
-        sendResponse(exchange, 405, "<h1>Method POST not allowed</h1>");
+        sendResponse(exchange, ERROR_CODE_405.getCode(), ERROR_FALLBACK_405_POST.getFallBack());
     }
 
     protected void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
