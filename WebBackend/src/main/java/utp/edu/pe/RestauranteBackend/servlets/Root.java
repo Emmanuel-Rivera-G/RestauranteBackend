@@ -15,6 +15,7 @@ public class Root extends HttpServletBasic {
 
     @Override
     public void doPost(HttpExchange exchange) throws IOException {
-        super.doPost(exchange);
+        Object requestBodyAsJson = super.getRequestXWWWFormBodyAsJson(exchange, Object.class);
+        this.sendJsonResponse(exchange,200, requestBodyAsJson);
     }
 }

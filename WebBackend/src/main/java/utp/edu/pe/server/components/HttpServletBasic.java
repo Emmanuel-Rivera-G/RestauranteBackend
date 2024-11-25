@@ -2,12 +2,10 @@ package utp.edu.pe.server.components;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +30,11 @@ public abstract class HttpServletBasic {
     }
 
     protected void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
-        exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+        sendBasicResponse(exchange, "text/html", "charset=UTF-8", statusCode, response);
+    }
+
+    protected void sendBasicResponse(HttpExchange exchange,String type, String charset, int statusCode, String response) throws IOException {
+        exchange.getResponseHeaders().set("Content-Type", type + "; " + charset);
         exchange.sendResponseHeaders(statusCode, response.getBytes().length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes());
@@ -41,8 +43,7 @@ public abstract class HttpServletBasic {
     
     protected void sendJsonResponse(HttpExchange exchange, int statusCode, Object responseObject) throws IOException {
         String jsonResponse = gson.toJson(responseObject);
-        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-        sendResponse(exchange, statusCode, jsonResponse);
+        sendBasicResponse(exchange, "application/json", "charset=UTF-8", statusCode, jsonResponse);
     }
     
     protected Map<String, String> getQueryParams(HttpExchange exchange) {
@@ -67,6 +68,25 @@ public abstract class HttpServletBasic {
         try (InputStream is = exchange.getRequestBody();
             InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             return gson.fromJson(reader, type);
+        } catch (IOException ioe) {
+            LOGGER.error(ioe.getMessage());
+            return null;
+        }
+    }
+
+    protected <T> T getRequestXWWWFormBodyAsJson(HttpExchange exchange, Class<T> type) throws IOException {
+        try (InputStream is = exchange.getRequestBody();) {
+            StringBuilder body = new StringBuilder();
+
+            int bit;
+            while ((bit = is.read()) != -1)
+                body.append((char) bit);
+
+            Map<String, String> formParams = parseFormParams(body.toString());
+            return gson.fromJson(gson.toJson(formParams), type);
+        } catch (IOException ioe) {
+            LOGGER.error(ioe.getMessage());
+            return null;
         }
     }
     
@@ -80,5 +100,21 @@ public abstract class HttpServletBasic {
             }
             return body.toString().trim();
         }
+    }
+
+    private Map<String, String> parseFormParams(String formData) {
+        Map<String, String> params = new HashMap<>();
+        String[] pairs = formData.split("&");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=");
+            try {
+                String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8.name());
+                String value = keyValue.length > 1 ? URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8.name()) : "";
+                params.put(key, value);
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.error("Error decoding form parameter: " + e.getMessage());
+            }
+        }
+        return params;
     }
 }
