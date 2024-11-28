@@ -21,4 +21,5 @@ nbproject/private/
 *.tar.gz
 
 # Archivos específicos de tu proyecto
-WebBackend/build/
+*/build/
+*/target/
