@@ -59,7 +59,11 @@ public class ServletHandler implements HttpHandler {
         path = (path.startsWith(this.contextPath)) ?
                 path.substring(this.contextPath.length()) :
                 path;
-        if (path.compareTo("") == 0) path = "/";
+        if (path.compareTo("")==0 || path.compareTo("/")==0)
+            path = "/";
+        else if (path.endsWith("/"))
+            path = path.substring(0, path.length() - 1);
+
         HttpServletBasic servlet = servlets.get(path);
         
         if (servlet != null) {
