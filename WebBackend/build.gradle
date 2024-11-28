@@ -5,9 +5,11 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.3-rc-1/userguide/building_java_projects.html in the Gradle documentation.
  */
 
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'maven-publish'
 }
 
 repositories {
@@ -49,5 +51,17 @@ tasks.named('test') {
 tasks.named('jar') {
     manifest {
         attributes 'Main-Class': application.mainClass.get()
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
     }
 }
