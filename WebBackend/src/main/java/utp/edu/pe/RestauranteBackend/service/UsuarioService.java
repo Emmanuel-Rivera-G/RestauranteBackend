@@ -1,6 +1,6 @@
-package utp.edu.pe.RestauranteBackend.services;
+package utp.edu.pe.RestauranteBackend.service;
 
-import utp.edu.pe.RestauranteBackend.services.interfaces.Authenticable;
+import utp.edu.pe.RestauranteBackend.service.interfaz.Authenticable;
 
 public class UsuarioService implements Authenticable<String> {
 
