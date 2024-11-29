@@ -4,7 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
-import utp.edu.pe.RestauranteBackend.services.UsuarioService;
+import utp.edu.pe.RestauranteBackend.service.UsuarioService;
 import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 
