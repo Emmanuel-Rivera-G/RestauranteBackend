@@ -6,6 +6,9 @@ import utp.edu.pe.RestauranteBackend.dao.interfaz.PedidoDAO;
 import utp.edu.pe.RestauranteBackend.model.Pedido;
 
 import java.util.List;
+import java.util.Optional;
+
+import static utp.edu.pe.server.config.EntityManagerCreator.*;
 
 public class PedidoDAOImpl extends DAO implements PedidoDAO {
 
@@ -14,27 +17,33 @@ public class PedidoDAOImpl extends DAO implements PedidoDAO {
     }
 
     @Override
-    public boolean savePedido(Pedido usuario) {
-        return false;
+    public boolean savePedido(Pedido pedido) {
+        return saveInstance(entityManager, pedido);
     }
 
     @Override
-    public boolean deletePedido(Pedido usuario) {
-        return false;
+    public boolean deletePedido(Pedido pedido) {
+        return removeInstance(entityManager, pedido);
     }
 
     @Override
-    public Pedido updatePedido(Pedido usuario) {
-        return null;
+    public Pedido updatePedido(Pedido pedido) {
+        Optional<Pedido> optionalPedido = updateInstance(Pedido.class, entityManager, pedido);
+        if (optionalPedido.isEmpty()) throw new RuntimeException("Pedido no actualizado.");
+        return optionalPedido.get();
     }
 
     @Override
     public List<Pedido> findAllPedidos() {
-        return List.of();
+        Optional<List<Pedido>> optionalPedidoList = queryCustomNativeSql(Pedido.class, entityManager, "SELECT * FROM pedidos");
+        if (optionalPedidoList.isEmpty()) throw new RuntimeException("Lista de pedidos no encontrada.");
+        return optionalPedidoList.get();
     }
 
     @Override
     public Pedido findPedidoById(Long id) {
-        return null;
+        Optional<Pedido> optionalPedido = findInstanceById(Pedido.class, entityManager, id);
+        if (optionalPedido.isEmpty()) throw new RuntimeException("Pedido no encontrado con id: " + id + ".");
+        return optionalPedido.get();
     }
 }

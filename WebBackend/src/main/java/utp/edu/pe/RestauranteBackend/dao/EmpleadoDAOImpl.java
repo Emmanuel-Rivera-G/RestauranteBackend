@@ -6,6 +6,9 @@ import utp.edu.pe.RestauranteBackend.dao.interfaz.EmpleadoDAO;
 import utp.edu.pe.RestauranteBackend.model.Empleado;
 
 import java.util.List;
+import java.util.Optional;
+
+import static utp.edu.pe.server.config.EntityManagerCreator.*;
 
 public class EmpleadoDAOImpl extends DAO implements EmpleadoDAO {
 
@@ -14,27 +17,33 @@ public class EmpleadoDAOImpl extends DAO implements EmpleadoDAO {
     }
 
     @Override
-    public boolean saveEmpleado(Empleado usuario) {
-        return false;
+    public boolean saveEmpleado(Empleado empleado) {
+        return saveInstance(entityManager, empleado);
     }
 
     @Override
-    public boolean deleteEmpleado(Empleado usuario) {
-        return false;
+    public boolean deleteEmpleado(Empleado empleado) {
+        return removeInstance(entityManager, empleado);
     }
 
     @Override
-    public Empleado updateEmpleado(Empleado usuario) {
-        return null;
+    public Empleado updateEmpleado(Empleado empleado) {
+        Optional<Empleado> optionalEmpleado = updateInstance(Empleado.class, entityManager, empleado);
+        if (optionalEmpleado.isEmpty()) throw new RuntimeException("Empleado no actualizado.");
+        return optionalEmpleado.get();
     }
 
     @Override
     public List<Empleado> findAllEmpleados() {
-        return List.of();
+        Optional<List<Empleado>> optionalEmpleadoList = queryCustomNativeSql(Empleado.class, entityManager, "SELECT * FROM empleados");
+        if (optionalEmpleadoList.isEmpty()) throw new RuntimeException("Lista de empleados no encontrada.");
+        return optionalEmpleadoList.get();
     }
 
     @Override
     public Empleado findEmpleadoById(Long id) {
-        return null;
+        Optional<Empleado> optionalEmpleado = findInstanceById(Empleado.class, entityManager, id);
+        if (optionalEmpleado.isEmpty()) throw new RuntimeException("Empleado no encontrado con id: " + id + ".");
+        return optionalEmpleado.get();
     }
 }

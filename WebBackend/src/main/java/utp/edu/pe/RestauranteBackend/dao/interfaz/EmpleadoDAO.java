@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface EmpleadoDAO {
 
-    boolean saveEmpleado(Empleado usuario);
+    boolean saveEmpleado(Empleado empleado);
 
-    boolean deleteEmpleado(Empleado usuario);
+    boolean deleteEmpleado(Empleado empleado);
 
-    Empleado updateEmpleado(Empleado usuario);
+    Empleado updateEmpleado(Empleado empleado);
 
     List<Empleado> findAllEmpleados();
 

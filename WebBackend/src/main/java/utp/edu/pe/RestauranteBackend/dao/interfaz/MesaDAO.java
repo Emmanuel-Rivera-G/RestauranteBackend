@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface MesaDAO {
 
-    boolean saveMesa(Mesa usuario);
+    boolean saveMesa(Mesa mesa);
 
-    boolean deleteMesa(Mesa usuario);
+    boolean deleteMesa(Mesa mesa);
 
-    Mesa updateMesa(Mesa usuario);
+    Mesa updateMesa(Mesa mesa);
 
     List<Mesa> findAllMesas();
 

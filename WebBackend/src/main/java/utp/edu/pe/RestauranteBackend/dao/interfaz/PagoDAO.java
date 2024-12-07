@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface PagoDAO {
 
-    boolean savePago(Pago usuario);
+    boolean savePago(Pago pago);
 
-    boolean deletePago(Pago usuario);
+    boolean deletePago(Pago pago);
 
-    Pago updatePago(Pago usuario);
+    Pago updatePago(Pago pago);
 
     List<Pago> findAllPagos();
 

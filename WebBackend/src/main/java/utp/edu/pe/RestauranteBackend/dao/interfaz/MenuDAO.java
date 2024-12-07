@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface MenuDAO {
 
-    boolean saveMenu(Menu usuario);
+    boolean saveMenu(Menu menuItem);
 
-    boolean deleteMenu(Menu usuario);
+    boolean deleteMenu(Menu menuItem);
 
-    Menu updateMenu(Menu usuario);
+    Menu updateMenu(Menu menuItem);
 
     List<Menu> findAllMenus();
 

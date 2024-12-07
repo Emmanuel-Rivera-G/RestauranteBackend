@@ -3,8 +3,11 @@ package utp.edu.pe.RestauranteBackend.service;
 import jakarta.persistence.EntityManager;
 import utp.edu.pe.RestauranteBackend.dao.UsuarioDAOImpl;
 import utp.edu.pe.RestauranteBackend.dao.interfaz.UsuarioDAO;
+import utp.edu.pe.RestauranteBackend.model.Usuario;
 import utp.edu.pe.RestauranteBackend.service.interfaz.Authenticable;
 import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
+
+import java.util.List;
 
 public class UsuarioServiceImpl implements UsuarioService {
 
@@ -31,5 +34,29 @@ public class UsuarioServiceImpl implements UsuarioService {
         String nombre;
         return true;
     }
-    
+
+    @Override
+    public boolean saveUsuario(Usuario usuario) {
+        return usuarioDAO.saveUsuario(usuario);
+    }
+
+    @Override
+    public boolean deleteUsuario(Usuario usuario) {
+        return usuarioDAO.deleteUsuario(usuario);
+    }
+
+    @Override
+    public Usuario updateUsuario(Usuario usuario) {
+        return usuarioDAO.updateUsuario(usuario);
+    }
+
+    @Override
+    public List<Usuario> findAllUsuarios() {
+        return usuarioDAO.findAllUsuarios();
+    }
+
+    @Override
+    public Usuario findUsuarioById(Long id) {
+        return usuarioDAO.findUsuarioById(id);
+    }
 }

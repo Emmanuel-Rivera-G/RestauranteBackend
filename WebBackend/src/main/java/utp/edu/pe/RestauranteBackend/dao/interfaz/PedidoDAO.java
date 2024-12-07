@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface PedidoDAO {
 
-    boolean savePedido(Pedido usuario);
+    boolean savePedido(Pedido pedido);
 
-    boolean deletePedido(Pedido usuario);
+    boolean deletePedido(Pedido pedido);
 
-    Pedido updatePedido(Pedido usuario);
+    Pedido updatePedido(Pedido pedido);
 
     List<Pedido> findAllPedidos();
 

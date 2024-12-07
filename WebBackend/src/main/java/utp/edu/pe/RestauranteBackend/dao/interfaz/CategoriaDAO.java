@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface CategoriaDAO {
 
-    boolean saveCategoria(Categoria usuario);
+    boolean saveCategoria(Categoria categoria);
 
-    boolean deleteCategoria(Categoria usuario);
+    boolean deleteCategoria(Categoria categoria);
 
-    Categoria updateCategoriao(Categoria usuario);
+    Categoria updateCategoria(Categoria categoria);
 
     List<Categoria> findAllCategorias();
 
