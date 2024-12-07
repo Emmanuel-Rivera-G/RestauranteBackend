@@ -18,4 +18,5 @@ public interface UsuarioDAO {
 
     Usuario findUsuarioByNombreUsuairo(String nombre);
 
+    List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio);
 }

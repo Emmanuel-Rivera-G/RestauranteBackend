@@ -36,6 +36,14 @@ public abstract class HttpServletBasic {
         sendNotAllowedErrorResponse(exchange);
     }
 
+    public void doPut(HttpExchange exchange) throws IOException {
+        sendNotAllowedErrorResponse(exchange);
+    }
+
+    public void doDelete(HttpExchange exchange) throws IOException {
+        sendNotAllowedErrorResponse(exchange);
+    }
+
     /**
      * Envía una respuesta HTML sencilla con un código de estado HTTP y contenido especificado.
      *

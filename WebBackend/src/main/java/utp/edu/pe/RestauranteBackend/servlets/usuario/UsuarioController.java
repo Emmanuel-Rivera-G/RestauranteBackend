@@ -13,7 +13,9 @@ import utp.edu.pe.server.constants.HttpStatusCode;
 import utp.edu.pe.utils.LoggerCreator;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import static utp.edu.pe.server.config.ServletHandler.getterPath;
@@ -33,63 +35,83 @@ public class UsuarioController extends HttpServletBasic {
 
     @Override
     public void doGet(HttpExchange exchange) throws IOException {
-        Map<String,String> params  = this.getQueryParams(exchange);
+        Map<String, String> params = this.getQueryParams(exchange);
         Map<String, Object> response = new TreeMap<>();
-        if (params.containsKey("id") && params.containsKey("nombreUsuario")) {
-            long id = 0;
-            try {
-                id = Long.parseLong(params.get("id"));
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                this.sendAnyHtmlFileResponse(
-                        HttpStatusCode.BAD_REQUEST.getCode(),
-                        exchange,
-                        HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                        ""
-                );
-                return;
-            }
-            String nombreUsuario = params.get("nombreUsuario");
-            Usuario usuarioId = usuarioService.findUsuarioById(id);
-            Usuario usuarioNombre = usuarioService.findUsuarioByNombreUsuairo(nombreUsuario);
-            if (usuarioId.getId() == usuarioNombre.getId()) {
-                response.put("Usuario", usuarioNombre);
-            } else {
-                Map<String, Object> res = new TreeMap<>();
-                res.put("Error", "El ID y el nombre no coinciden.");
-                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
-                return;
-            }
-            response.put("_Operación Exitosa", true);
-            this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
-            return;
-        }
-        if (params.containsKey("id")) {
-            long id = 0;
-            try {
-                id = Long.parseLong(params.get("id"));
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                this.sendAnyHtmlFileResponse(
-                        HttpStatusCode.BAD_REQUEST.getCode(),
-                        exchange,
-                        HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                        ""
-                );
-                return;
-            }
-            response.put("Usuario", usuarioService.findUsuarioById(id));
-            response.put("_Operación Exitosa", true);
-            this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
-            return;
-        }
-        if (params.containsKey("nombreUsuario")) {
-            String nombreUsuario = params.get("nombreUsuario");
-            response.put("Usuario", usuarioService.findUsuarioByNombreUsuairo(nombreUsuario));
-            response.put("_Operación Exitosa", true);
-            this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
-        }
 
+        try {
+            if (params.isEmpty()) {
+                response.put("_Operación Exitosa", true);
+                response.put("body", usuarioService.findAllUsuarios());
+            }
+            if (params.containsKey("id") && params.containsKey("nombreUsuario")) {
+                long id = Long.parseLong(params.get("id"));
+                String nombreUsuario = params.get("nombreUsuario");
+
+                Usuario usuarioById = usuarioService.findUsuarioById(id);
+                Usuario usuarioByNombre = usuarioService.findUsuarioByNombreUsuairo(nombreUsuario);
+
+                if (Objects.equals(usuarioById.getId(), usuarioByNombre.getId())) {
+                    response.put("Usuario", usuarioByNombre);
+                    response.put("_Operación Exitosa", true);
+                    this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                } else {
+                    response.put("Error", "El ID y el nombre no coinciden.");
+                    this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+                }
+                return;
+            }
+
+            if (params.containsKey("id")) {
+                long id = Long.parseLong(params.get("id"));
+                Usuario usuario = usuarioService.findUsuarioById(id);
+                response.put("Usuario", usuario);
+                response.put("_Operación Exitosa", true);
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                return;
+            }
+
+            if (params.containsKey("nombreUsuario")) {
+                String nombreUsuario = params.get("nombreUsuario");
+                Usuario usuario = usuarioService.findUsuarioByNombreUsuairo(nombreUsuario);
+                response.put("Usuario", usuario);
+                response.put("_Operación Exitosa", true);
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                return;
+            }
+
+            if (params.containsKey("nombreInicio")) {
+                String nombreInicio = params.get("nombreInicio");
+                List<Usuario> usuarios = usuarioService.findUsuariosByNombreUsuarioStartsWith(nombreInicio);
+                response.put("Usuarios", usuarios);
+                response.put("_Operación Exitosa", true);
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                return;
+            }
+
+            response.put("Error", "Parámetros inválidos o insuficientes.");
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+
+        } catch (NumberFormatException e) {
+            LOGGER.error("Error al convertir ID a número: " + e.getMessage());
+            this.sendAnyHtmlFileResponse(
+                    HttpStatusCode.BAD_REQUEST.getCode(),
+                    exchange,
+                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
+                    ""
+            );
+        } catch (RuntimeException e) {
+            LOGGER.error("Error al procesar la solicitud: " + e.getMessage());
+            response.put("Error", e.getMessage());
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+        } catch (Exception e) {
+            LOGGER.error("Error interno: " + e.getMessage());
+            this.sendAnyHtmlFileResponse(
+                    HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(),
+                    exchange,
+                    HttpCodeFallBack.ERROR_FALLBACK_500.getFallBack(),
+                    ""
+            );
+        }
     }
 
     @Override

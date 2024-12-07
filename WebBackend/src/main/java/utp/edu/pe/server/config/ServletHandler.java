@@ -83,6 +83,10 @@ public class ServletHandler implements HttpHandler {
             servlet.doGet(exchange);
         } else if ("POST".equalsIgnoreCase(method)) {
             servlet.doPost(exchange);
+        } else if ("PUT".equalsIgnoreCase(method)) {
+            servlet.doPut(exchange);
+        } else if ("DELETE".equalsIgnoreCase(method)) {
+            servlet.doDelete(exchange);
         } else {
             handleNotAllowedMethod(exchange);
         }

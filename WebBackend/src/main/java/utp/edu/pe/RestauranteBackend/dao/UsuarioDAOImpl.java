@@ -61,4 +61,16 @@ public class UsuarioDAOImpl extends DAO implements UsuarioDAO {
         else
             throw new RuntimeException("Usuario encontrodo más de una vez con nombre:" + nombre + ".");
     }
+
+    public List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio) {
+        Map<String, Object> params = new TreeMap<>();
+        params.put("nombreUsuario", nombreInicio + "%");
+
+        String query = "SELECT * FROM usuarios WHERE nombreUsuario LIKE :nombreUsuario";
+        Optional<List<Usuario>> optionalUsuarioList = parametrizedQueryCustomNativeSql(Usuario.class, entityManager, query, params);
+
+        return optionalUsuarioList.orElseThrow(() ->
+                new RuntimeException("No se encontraron usuarios cuyo nombre inicie con: " + nombreInicio)
+        );
+    }
 }

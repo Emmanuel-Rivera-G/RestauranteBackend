@@ -18,4 +18,6 @@ public interface UsuarioService extends Authenticable<String> {
 
     Usuario findUsuarioByNombreUsuairo(String nombre);
 
+    List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio);
+
 }

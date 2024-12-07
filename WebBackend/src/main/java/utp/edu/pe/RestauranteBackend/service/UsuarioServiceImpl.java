@@ -65,4 +65,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario findUsuarioByNombreUsuairo(String nombre) {
         return usuarioDAO.findUsuarioByNombreUsuairo(nombre);
     }
+
+    @Override
+    public List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio) {
+        return usuarioDAO.findUsuariosByNombreUsuarioStartsWith(nombreInicio);
+    }
 }
