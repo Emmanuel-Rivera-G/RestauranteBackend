@@ -9,6 +9,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import static utp.edu.pe.utils.LoggerCreator.getLogger;
 import static utp.edu.pe.server.constants.HttpStatusCode.ERROR_CODE_405;
@@ -20,6 +22,12 @@ public abstract class HttpServletBasic {
     private final Logger LOGGER = getLogger(HttpServletBasic.class);
     
     private final Gson gson = new Gson();
+
+    protected final EntityManager entityManager;
+
+    public HttpServletBasic(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
     
     public void doGet(HttpExchange exchange) throws IOException {
         sendResponse(exchange, ERROR_CODE_405.getCode(), ERROR_FALLBACK_405_GET.getFallBack());

@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
+
+import jakarta.persistence.EntityManager;
 import utp.edu.pe.RestauranteBackend.service.UsuarioService;
 import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
@@ -13,8 +15,9 @@ public class AuthController extends HttpServletBasic {
     
     private final UsuarioService usuarioService;
     
-    public AuthController() {
-        this.usuarioService = new UsuarioService();
+    public AuthController(EntityManager entityManager) {
+        super(entityManager);
+        this.usuarioService = new UsuarioService(this.entityManager);
     }
 
     @Override
@@ -23,11 +26,13 @@ public class AuthController extends HttpServletBasic {
         String usuario = params.get("usuario");
         String pass = params.get("usuario");
         
-        usuarioService.autenticar(usuario, pass);
-        
+        boolean isAuth = usuarioService.autenticar(usuario, pass);
+
+        if (isAuth) System.out.println();
+
         Map<String, Object> response = new TreeMap<>();
         response.put("Authentication", true);
-        
+
         this.sendJsonResponse(exchange, 200, response);
     }
 

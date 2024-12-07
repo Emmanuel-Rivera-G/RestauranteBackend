@@ -1,6 +1,8 @@
 package utp.edu.pe.server.config;
 
 import com.sun.net.httpserver.HttpServer;
+import jakarta.persistence.EntityManager;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -24,10 +26,10 @@ public class WebServer {
             .setDefaultHostname();
     }
     
-    public WebServer(boolean startServer) throws IOException {
+    public WebServer(boolean startServer, EntityManager entityManager) throws IOException {
         this();
         if (startServer) {
-            iniciarServidor();
+            iniciarServidor(entityManager);
         }
     }
     
@@ -38,10 +40,10 @@ public class WebServer {
             .setDefaultHostname();
     }
     
-    public WebServer(boolean startServer, int port) throws IOException {
+    public WebServer(boolean startServer, int port, EntityManager entityManager) throws IOException {
         this(port);
         if (startServer) {
-            iniciarServidor();
+            iniciarServidor(entityManager);
         }
     }
     
@@ -52,10 +54,10 @@ public class WebServer {
             .setDefaultHostname();
     }
     
-    public WebServer(boolean startServer, int port, int backlog) throws IOException {
+    public WebServer(boolean startServer, int port, int backlog, EntityManager entityManager) throws IOException {
         this(port, backlog);
         if (startServer) {
-            iniciarServidor();
+            iniciarServidor(entityManager);
         }
     }
     
@@ -66,21 +68,21 @@ public class WebServer {
             .setHostname(hostname);
     }
     
-    public WebServer(boolean startServer, int port, int backlog, String hostname) throws IOException {
+    public WebServer(boolean startServer, int port, int backlog, String hostname, EntityManager entityManager) throws IOException {
         this(port, backlog, hostname);
         if (startServer) {
-            iniciarServidor();
+            iniciarServidor(entityManager);
         }
     }
     
-    public void iniciarServidor() throws IOException {
+    public void iniciarServidor(EntityManager entityManager) throws IOException {
         InetSocketAddress webSocket = new InetSocketAddress(this.hostname, this.port);
         WebServer.server = HttpServer.create(webSocket, this.backlog);
         
         if (this.contextPath == null)
             setDefaultContextPath();
         
-        WebServer.server.createContext(this.contextPath, new ServletHandler(contextPath));
+        WebServer.server.createContext(this.contextPath, new ServletHandler(contextPath, entityManager));
         
         WebServer.server.start();
     }

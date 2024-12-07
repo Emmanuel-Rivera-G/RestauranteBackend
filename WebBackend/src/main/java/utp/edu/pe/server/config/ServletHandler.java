@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import jakarta.persistence.EntityManager;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import utp.edu.pe.server.components.HttpServletBasic;
@@ -41,15 +42,15 @@ public class ServletHandler implements HttpHandler {
     private String methods;
     private String headersResponse;
     
-    public ServletHandler(String contextPath) {
+    public ServletHandler(String contextPath, EntityManager entityManager) {
         this.contextPath = contextPath;
-        registerServlets();
+        registerServlets(entityManager);
         setCorssAtributes();
     }
     
-    public ServletHandler(String contextPath, String corss) {
+    public ServletHandler(String contextPath, String corss, EntityManager entityManager) {
         this.contextPath = contextPath;
-        registerServlets();
+        registerServlets(entityManager);
         setCorssAtributes(corss,null,null);
     }
 
@@ -113,7 +114,7 @@ public class ServletHandler implements HttpHandler {
         }
     }
     
-    private void registerServlets() {
+    private void registerServlets(EntityManager entityManager) {
         try {
             Reflections reflections = new Reflections("utp.edu.pe");
             Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(WebServlet.class);
@@ -122,7 +123,9 @@ public class ServletHandler implements HttpHandler {
                 if (HttpServletBasic.class.isAssignableFrom(clase)) {
                     WebServlet annotation = clase.getAnnotation(WebServlet.class);
                     String path = annotation.value();
-                    HttpServletBasic instance = (HttpServletBasic) clase.getDeclaredConstructor().newInstance();
+                    HttpServletBasic instance = (HttpServletBasic) clase
+                            .getDeclaredConstructor(EntityManager.class)
+                            .newInstance(entityManager);
                     servlets.put(path, instance);
                     LOGGER.info("Servlet registrado: {} -> {}", path, clase.getName());
                 } else {

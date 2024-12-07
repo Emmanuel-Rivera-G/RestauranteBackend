@@ -10,6 +10,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'maven-publish'
+    id 'io.freefair.lombok' version '8.11'
 }
 
 repositories {
@@ -32,12 +33,14 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-core:6.6.3.Final'
     implementation 'com.mysql:mysql-connector-j:9.1.0'
     implementation 'jakarta.persistence:jakarta.persistence-api:3.2.0'
+    implementation 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(19)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -59,6 +62,10 @@ tasks.named('jar') {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType(JavaCompile) {
+    options.annotationProcessorPath = configurations.annotationProcessor
 }
 
 publishing {
