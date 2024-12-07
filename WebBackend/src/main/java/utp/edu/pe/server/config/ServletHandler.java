@@ -201,7 +201,7 @@ public class ServletHandler implements HttpHandler {
 
     private String sourcePathArchive(String archive, String ...carpetas) {
         String result = webSource;
-        if (carpetas.length <= 0) {
+        if (carpetas.length == 0) {
             result += archive;
             return result;
         }

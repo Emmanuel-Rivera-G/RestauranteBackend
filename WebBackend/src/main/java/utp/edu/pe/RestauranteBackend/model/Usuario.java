@@ -1,25 +1,25 @@
 package utp.edu.pe.RestauranteBackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "usuarios")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
     @Id
-    @Column(name = "id_usuario")
-    private long idUsuario;
-    
-    private String username;
-    
-    private String password;
-    
-    private String name;
-    
-    private String lastName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "nombre_usuario", nullable = false)
+    private String nombreUsuario;
+
+    @Column(nullable = false)
+    private String contrasena;
 }

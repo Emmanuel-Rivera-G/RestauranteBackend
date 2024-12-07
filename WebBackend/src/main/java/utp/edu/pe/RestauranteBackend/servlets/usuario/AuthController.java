@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import jakarta.persistence.EntityManager;
-import utp.edu.pe.RestauranteBackend.service.UsuarioService;
+import utp.edu.pe.RestauranteBackend.service.UsuarioServiceImpl;
+import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
 import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 
@@ -17,14 +18,14 @@ public class AuthController extends HttpServletBasic {
     
     public AuthController(EntityManager entityManager) {
         super(entityManager);
-        this.usuarioService = new UsuarioService(this.entityManager);
+        this.usuarioService = new UsuarioServiceImpl(this.entityManager);
     }
 
     @Override
     public void doGet(HttpExchange exchange) throws IOException {
         Map<String,String> params  = this.getQueryParams(exchange);
         String usuario = params.get("usuario");
-        String pass = params.get("usuario");
+        String pass = params.get("password");
         
         boolean isAuth = usuarioService.autenticar(usuario, pass);
 

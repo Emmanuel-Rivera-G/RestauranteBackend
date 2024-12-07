@@ -1,15 +1,17 @@
 package utp.edu.pe.RestauranteBackend.service;
 
 import jakarta.persistence.EntityManager;
-import utp.edu.pe.RestauranteBackend.dao.UsuarioDao;
+import utp.edu.pe.RestauranteBackend.dao.UsuarioDAOImpl;
+import utp.edu.pe.RestauranteBackend.dao.interfaz.UsuarioDAO;
 import utp.edu.pe.RestauranteBackend.service.interfaz.Authenticable;
+import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
 
-public class UsuarioService implements Authenticable<String> {
+public class UsuarioServiceImpl implements UsuarioService {
 
-    private final UsuarioDao usuarioDao;
+    private final UsuarioDAO usuarioDAO;
 
-    public UsuarioService(EntityManager entityManager) {
-        this.usuarioDao = new UsuarioDao(entityManager);
+    public UsuarioServiceImpl(EntityManager entityManager) {
+        this.usuarioDAO = new UsuarioDAOImpl(entityManager);
     }
 
     @Override

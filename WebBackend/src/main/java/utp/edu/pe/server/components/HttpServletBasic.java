@@ -93,7 +93,7 @@ public abstract class HttpServletBasic {
             Map<String, String> formParams = parseFormParams(body.toString());
             return gson.fromJson(gson.toJson(formParams), type);
         } catch (IOException ioe) {
-            LOGGER.error(ioe.getMessage());
+            LOGGER.error(ioe.getMessage(), ioe);
             return null;
         }
     }
@@ -120,7 +120,7 @@ public abstract class HttpServletBasic {
                 String value = keyValue.length > 1 ? URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8.name()) : "";
                 params.put(key, value);
             } catch (UnsupportedEncodingException e) {
-                LOGGER.error("Error decoding form parameter: " + e.getMessage());
+                LOGGER.error("Error decoding form parameter: " + e.getMessage(), e);
             }
         }
         return params;

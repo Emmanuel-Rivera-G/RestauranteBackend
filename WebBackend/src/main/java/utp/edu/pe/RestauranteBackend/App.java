@@ -5,13 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import jakarta.persistence.EntityManager;
-import utp.edu.pe.RestauranteBackend.dao.UsuarioDao;
-import utp.edu.pe.RestauranteBackend.model.Usuario;
-import utp.edu.pe.RestauranteBackend.service.UsuarioService;
 import utp.edu.pe.server.config.EntityManagerCreator;
 import utp.edu.pe.server.config.WebServer;
-
-import javax.swing.*;
 
 public class App {
 
