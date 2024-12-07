@@ -17,8 +17,8 @@ import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_404;
 import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405;
-import static utp.edu.pe.server.constants.HttpStatusCode.ERROR_CODE_404;
-import static utp.edu.pe.server.constants.HttpStatusCode.ERROR_CODE_405;
+import static utp.edu.pe.server.constants.HttpStatusCode.NOT_FOUND;
+import static utp.edu.pe.server.constants.HttpStatusCode.METHOD_NOT_ALLOWED;
 import static utp.edu.pe.server.constants.SourceContent.SOURCE;
 import utp.edu.pe.utils.LoggerCreator;
 
@@ -35,7 +35,7 @@ public class ServletHandler implements HttpHandler {
     private final Logger LOGGER = LoggerCreator.getLogger(ServletHandler.class);
 
     private final Map<String, HttpServletBasic> servlets = new HashMap<>();
-    private final String webSource = SOURCE;
+    private final static String webSource = SOURCE;
 
     private String contextPath;
     private String corss;
@@ -88,25 +88,25 @@ public class ServletHandler implements HttpHandler {
         }
     }
 
-    private void handleNotFoundError(HttpExchange exchange) throws IOException {
-        this.handleAnyError(
-            ERROR_CODE_404.getCode(),
+    public static void handleNotFoundError(HttpExchange exchange) throws IOException {
+        ServletHandler.handleAnyArchiveHtml(
+            NOT_FOUND.getCode(),
             exchange,
             ERROR_FALLBACK_404.getFallBack(),
-            getterPath(sourcePathArchive("404.html"))
+                ServletHandler.getterPath(ServletHandler.sourcePathArchive("404.html"))
         );
     }
 
-    private void handleNotAllowedMethod(HttpExchange exchange) throws IOException {
-        this.handleAnyError(
-            ERROR_CODE_405.getCode(),
+    public static void handleNotAllowedMethod(HttpExchange exchange) throws IOException {
+        ServletHandler.handleAnyArchiveHtml(
+            METHOD_NOT_ALLOWED.getCode(),
             exchange,
             ERROR_FALLBACK_405.getFallBack(),
-            getterPath(sourcePathArchive("405.html"))
+            ServletHandler.getterPath(ServletHandler.sourcePathArchive("405.html"))
         );
     }
 
-    private void handleAnyError(int code, HttpExchange exchange, String fallback, Path filePathResponse) throws IOException {
+    public static void handleAnyArchiveHtml(int code, HttpExchange exchange, String fallback, Path filePathResponse) throws IOException {
         byte[] response = (Files.exists(filePathResponse)) ? Files.readAllBytes(filePathResponse) : fallback.getBytes();
         exchange.sendResponseHeaders(code, response.length);
         try (OutputStream os = exchange.getResponseBody()) {
@@ -191,15 +191,15 @@ public class ServletHandler implements HttpHandler {
         return this;
     }
 
-    private Path getterPath(String path) {
+    public static Path getterPath(String path) {
         return Paths.get(path);
     }
 
-    private String sourcePathArchive(String archive) {
-        return this.sourcePathArchive(archive, new String[]{});
+    public static String sourcePathArchive(String archive) {
+        return ServletHandler.sourcePathArchive(archive, new String[]{});
     }
 
-    private String sourcePathArchive(String archive, String ...carpetas) {
+    public static String sourcePathArchive(String archive, String ...carpetas) {
         String result = webSource;
         if (carpetas.length == 0) {
             result += archive;
