@@ -11,10 +11,8 @@ import utp.edu.pe.RestauranteBackend.service.UsuarioServiceImpl;
 import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
 import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
+import utp.edu.pe.server.constants.HttpCodeFallBack;
 import utp.edu.pe.server.constants.HttpStatusCode;
-
-import static utp.edu.pe.server.config.ServletHandler.getterPath;
-import static utp.edu.pe.server.config.ServletHandler.sourcePathArchive;
 
 @WebServlet("/usuario/auth")
 public class AuthController extends HttpServletBasic {
@@ -29,24 +27,62 @@ public class AuthController extends HttpServletBasic {
     @Override
     public void doGet(HttpExchange exchange) throws IOException {
         Map<String,String> params  = this.getQueryParams(exchange);
-        String usuario = params.get("usuario");
-        String pass = params.get("contrasena");
+        String usuario = "usuario";
+        String pass = "contrasena";
+
+        if (params.containsKey("usuario") && params.containsKey("contrasena")) {
+            usuario = params.get("usuario");
+            pass = params.get("contrasena");
+        } else {
+            this.sendAnyHtmlFileResponse(
+                    HttpStatusCode.BAD_REQUEST.getCode(),
+                    exchange,
+                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
+                    ""
+                );
+            return;
+        }
 
         boolean isAuth = usuarioService.autenticar(usuario, pass);
 
-        if (isAuth) System.out.println();
-
-        Map<String, Object> response = new TreeMap<>();
-        response.put("Authentication", true);
-
-        this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+        if (isAuth) {
+            Map<String, Object> response = new TreeMap<>();
+            response.put("Authentication", true);
+            this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+        } else {
+            this.sendAnyHtmlFileResponse(
+                    HttpStatusCode.UNAUTHORIZED.getCode(),
+                    exchange,
+                    HttpCodeFallBack.ERROR_FALLBACK_401.getFallBack(),
+                    ""
+            );
+        }
     }
 
     @Override
     public void doPost(HttpExchange exchange) throws IOException {
-        Usuario body = this.getRequestBodyAsJson(exchange, Usuario.class);
-        System.out.println(body);
-        
-        this.sendResponse(exchange, HttpStatusCode.OK.getCode(), "null");
+        Usuario usuario = this.getRequestBodyAsJson(exchange, Usuario.class);
+        if (usuario != null)
+            if (usuario.getNombreUsuario() != null && usuario.getContrasena() != null) {
+                boolean operacionExitosa = usuarioService.saveUsuario(usuario);
+                Map<String, Object> response = new TreeMap<>();
+                response.put("Operación Exitosa", operacionExitosa);
+                response.put("Usuario", usuario);
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+            } else {
+                Map<String, Object> response = new TreeMap<>();
+                if (usuario.getNombreUsuario() == null)
+                    response.put("Error-Usuario", "El usuario no puede ser null");
+                if (usuario.getContrasena() == null)
+                    response.put("Error-Contrasena", "La contrasena no puede ser null");
+                this.sendJsonResponse(exchange, HttpStatusCode.NON_AUTHORITATIVE_INFORMATION.getCode(), response);
+            }
+        else
+            this.sendAnyHtmlFileResponse(
+                    HttpStatusCode.BAD_REQUEST.getCode(),
+                    exchange,
+                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
+                    ""
+            );
     }
 }

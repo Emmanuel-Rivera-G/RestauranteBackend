@@ -6,6 +6,9 @@ import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
 import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 
+import static utp.edu.pe.server.config.ServletHandler.getterPath;
+import static utp.edu.pe.server.config.ServletHandler.sourcePathArchive;
+
 @WebServlet("/usuario")
 public class UsuarioController extends HttpServletBasic {
 

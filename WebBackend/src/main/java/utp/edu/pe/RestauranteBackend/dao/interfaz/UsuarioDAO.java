@@ -16,4 +16,6 @@ public interface UsuarioDAO {
 
     Usuario findUsuarioById(Long id);
 
+    Usuario findUsuarioByNombreUsuairo(String nombre);
+
 }

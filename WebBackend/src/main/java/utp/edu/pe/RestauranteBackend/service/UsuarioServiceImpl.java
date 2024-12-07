@@ -21,11 +21,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     public boolean autenticar(String ...params) throws NullPointerException {
         String user = params[0];
         String pass = params[1];
-        if (user.equalsIgnoreCase("usuario") &&
-            pass.equalsIgnoreCase("contrasena")) {
-            return true;
+        Usuario usuario = usuarioDAO.findUsuarioByNombreUsuairo(user);
+        if (usuario != null) {
+            return usuario.getContrasena().compareTo(pass) == 0;
+        } else {
+            return false;
         }
-        return true;
     }
 
     @Override
@@ -58,5 +59,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Usuario findUsuarioById(Long id) {
         return usuarioDAO.findUsuarioById(id);
+    }
+
+    @Override
+    public Usuario findUsuarioByNombreUsuairo(String nombre) {
+        return usuarioDAO.findUsuarioByNombreUsuairo(nombre);
     }
 }

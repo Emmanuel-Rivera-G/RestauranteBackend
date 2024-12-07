@@ -15,4 +15,7 @@ public interface UsuarioService extends Authenticable<String> {
     List<Usuario> findAllUsuarios();
 
     Usuario findUsuarioById(Long id);
+
+    Usuario findUsuarioByNombreUsuairo(String nombre);
+
 }
