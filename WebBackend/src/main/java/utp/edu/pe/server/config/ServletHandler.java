@@ -20,6 +20,8 @@ import static utp.edu.pe.server.constants.HttpCodeFallBack.ERROR_FALLBACK_405;
 import static utp.edu.pe.server.constants.HttpStatusCode.NOT_FOUND;
 import static utp.edu.pe.server.constants.HttpStatusCode.METHOD_NOT_ALLOWED;
 import static utp.edu.pe.server.constants.SourceContent.SOURCE;
+
+import utp.edu.pe.server.constants.HttpStatusCode;
 import utp.edu.pe.utils.LoggerCreator;
 
 public class ServletHandler implements HttpHandler {
@@ -29,8 +31,8 @@ public class ServletHandler implements HttpHandler {
     private final static String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
     
     private final static String DEFAULT_CORSS = "*";
-    private final static String DEFAULT_METHODS = "GET, POST";
-    private final static String DEFAULT_HEADERS_RESPONSE = "Content-Type, Authorization";
+    private final static String DEFAULT_METHODS = "GET, POST, PUT, DELETE";
+    private final static String DEFAULT_HEADERS_RESPONSE = "Content-Type, Authorization, X-Requested-With";
     
     private final Logger LOGGER = LoggerCreator.getLogger(ServletHandler.class);
 
@@ -79,7 +81,9 @@ public class ServletHandler implements HttpHandler {
 
         this.setCorssConfiguration(exchange);
 
-        if ("GET".equalsIgnoreCase(method)) {
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            exchange.sendResponseHeaders(HttpStatusCode.NO_CONTENT.getCode(), -1);
+        } else if ("GET".equalsIgnoreCase(method)) {
             servlet.doGet(exchange);
         } else if ("POST".equalsIgnoreCase(method)) {
             servlet.doPost(exchange);

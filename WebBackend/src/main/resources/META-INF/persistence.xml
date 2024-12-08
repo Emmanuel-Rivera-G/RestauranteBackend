@@ -7,6 +7,12 @@
         <description>Persistence Unit para RestauranteBackend</description>
 
         <!-- Incluye clases de entidades JPA -->
+        <class>utp.edu.pe.RestauranteBackend.model.Categoria</class>
+        <class>utp.edu.pe.RestauranteBackend.model.Empleado</class>
+        <class>utp.edu.pe.RestauranteBackend.model.Menu</class>
+        <class>utp.edu.pe.RestauranteBackend.model.Mesa</class>
+        <class>utp.edu.pe.RestauranteBackend.model.Pago</class>
+        <class>utp.edu.pe.RestauranteBackend.model.Pedido</class>
         <class>utp.edu.pe.RestauranteBackend.model.Usuario</class>
 
         <!-- Opciones de configuración -->
@@ -22,7 +28,7 @@
 
             <!-- Hibernate Configuración -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>

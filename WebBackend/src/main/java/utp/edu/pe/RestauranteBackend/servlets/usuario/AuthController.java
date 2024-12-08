@@ -26,12 +26,11 @@ public class AuthController extends HttpServletBasic {
     @Override
     public void doGet(HttpExchange exchange) throws IOException {
         Map<String,String> params  = this.getQueryParams(exchange);
-        String usuario = "usuario";
-        String pass = "contrasena";
-
-        if (params.containsKey("usuario") && params.containsKey("contrasena")) {
-            usuario = params.get("usuario");
-            pass = params.get("contrasena");
+        String nombreUsuario = "nombreUsuario";
+        String contrasena = "contrasena";
+        if (params.containsKey("nombreUsuario") && params.containsKey("contrasena")) {
+            nombreUsuario = params.get("nombreUsuario");
+            contrasena = params.get("contrasena");
         } else {
             this.sendAnyHtmlFileResponse(
                     HttpStatusCode.BAD_REQUEST.getCode(),
@@ -41,8 +40,7 @@ public class AuthController extends HttpServletBasic {
                 );
             return;
         }
-
-        boolean isAuth = usuarioService.autenticar(usuario, pass);
+        boolean isAuth = usuarioService.autenticar(nombreUsuario, contrasena);
 
         if (isAuth) {
             Map<String, Object> response = new TreeMap<>();
@@ -55,6 +53,7 @@ public class AuthController extends HttpServletBasic {
                     HttpCodeFallBack.ERROR_FALLBACK_401.getFallBack(),
                     ""
             );
+            System.err.println("Error en AuthController");
         }
     }
 }

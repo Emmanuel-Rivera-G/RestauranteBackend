@@ -49,7 +49,8 @@ public class EntityManagerCreator {
             return result;
         } catch (Exception e) {
             TransactionManager.rollbackIfActive(entityManager);
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
+            e.printStackTrace();
             return Optional.empty();
         }
     }

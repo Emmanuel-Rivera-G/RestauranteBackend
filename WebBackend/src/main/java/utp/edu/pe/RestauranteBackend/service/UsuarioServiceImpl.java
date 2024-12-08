@@ -21,7 +21,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     public boolean autenticar(String ...params) throws NullPointerException {
         String user = params[0];
         String pass = params[1];
+        System.out.println("Usuario: " + user + " Pass: " + pass);
         Usuario usuario = usuarioDAO.findUsuarioByNombreUsuairo(user);
+        System.out.println(usuario);
         if (usuario != null) {
             return usuario.getContrasena().compareTo(pass) == 0;
         } else {
