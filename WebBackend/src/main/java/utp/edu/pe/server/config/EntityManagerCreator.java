@@ -6,8 +6,7 @@ import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
 import lombok.Getter;
 import org.slf4j.Logger;
-import utp.edu.pe.RestauranteBackend.model.Usuario;
-import utp.edu.pe.utils.LoggerCreator;
+import utp.edu.pe.utils.logger.LoggerCreator;
 import utp.edu.pe.utils.function.TriFunction;
 
 import java.util.List;
@@ -17,17 +16,15 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+@Getter
 public class EntityManagerCreator {
 
     private static final Logger LOGGER = LoggerCreator.getLogger(EntityManagerCreator.class);
 
-    private final EntityManagerFactory entityManagerFactory;
-
-    @Getter
     private final EntityManager entityManager;
 
     public EntityManagerCreator() {
-        this.entityManagerFactory = Persistence.createEntityManagerFactory("RestauranteBackend_unit");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("RestauranteBackend_unit");
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
@@ -50,7 +47,6 @@ public class EntityManagerCreator {
         } catch (Exception e) {
             TransactionManager.rollbackIfActive(entityManager);
             LOGGER.error(e.getMessage(), e);
-            e.printStackTrace();
             return Optional.empty();
         }
     }
@@ -64,25 +60,27 @@ public class EntityManagerCreator {
             EntityManager entityManager,
             Object instance,
             Object action
-    ) throws Exception {
+    ) throws RuntimeException, Exception {
         //noinspection rawtypes
         if (action instanceof BiConsumer biConsumer) {
             biConsumer.accept(entityManager, instance);
             return Optional.of(
-                    resultType == Boolean.class ? (E) Boolean.TRUE : (E) instance
+                resultType == Boolean.class ? (E) Boolean.TRUE : (E) instance
             );
         } else //noinspection rawtypes
             if (action instanceof BiFunction biFunction) {
-            return Optional.ofNullable((E) biFunction.apply(entityManager, instance));
+                return Optional.ofNullable(biFunction.apply(entityManager, instance))
+                        .map(result -> (E) result);
         } else
             //noinspection rawtypes
             if (action instanceof TriFunction triFunction) {
-            Map<String, Object> queryAndParams = (Map<String, Object>) instance;
-            return Optional.ofNullable((E) triFunction.apply(
-                    entityManager,
-                    queryAndParams.get(ParametrizedQueryMapKeys.QUERY),
-                    queryAndParams.get(ParametrizedQueryMapKeys.PARAMS)
-            ));
+                Map<String, Object> queryAndParams = (Map<String, Object>) instance;
+                return Optional.ofNullable(triFunction.apply(
+                        entityManager,
+                        queryAndParams.get(ParametrizedQueryMapKeys.QUERY),
+                        queryAndParams.get(ParametrizedQueryMapKeys.PARAMS)
+                    ))
+                    .map(result -> (E) result);
             }
         return Optional.empty();
     }
@@ -210,27 +208,88 @@ public class EntityManagerCreator {
     }
 
     // Métodos principales del EntityManager
-    private static final BiConsumer<EntityManager, Object> persist = EntityManager::persist;
-    private static final BiConsumer<EntityManager, Object> remove = EntityManager::remove;
-    private static final BiFunction<EntityManager, Object, Object> merge = EntityManager::merge;
-    private static final BiFunction<EntityManager, Object, Object> refresh = (em, entity) -> {
-        em.refresh(entity);
-        return entity;
+    private static final BiConsumer<EntityManager, Object> persist = (em, entity) -> {
+        try {
+            em.persist(entity);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
-    private static final BiConsumer<EntityManager, Object> detach = EntityManager::detach;
-    private static final BiConsumer<EntityManager, Object> flush = (em, entity) -> em.flush();
-    private static final BiConsumer<EntityManager, Object> clear = (em, entity) -> em.clear();
+    private static final BiConsumer<EntityManager, Object> remove = (em, entity) -> {
+        try {
+            em.remove(entity);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    };
+
+    private static final BiFunction<EntityManager, Object, Object> merge = (em, entity) -> {
+        try {
+            return em.merge(entity);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    };
+
+    private static final BiFunction<EntityManager, Object, Object> refresh = (em, entity) -> {
+        try {
+            em.refresh(entity);
+            return entity;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    };
+
+    private static final BiConsumer<EntityManager, Object> detach = (em, entity) -> {
+        try {
+            em.detach(entity);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    };
+
+    private static final BiConsumer<EntityManager, Object> flush = (em, entity) -> {
+        try {
+            em.flush();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    };
+
+    private static final BiConsumer<EntityManager, Object> clear = (em, entity) -> {
+        try {
+            em.clear();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    };
 
     private static final BiFunction<EntityManager, Object, Object> find = (em, paramsObj) -> {
-        Map<String, Object> params;
-        //noinspection unchecked
-        params = (Map<String, Object>) paramsObj;
-        if (params.size() != 2) {
-            throw new IllegalArgumentException("Se requieren exactamente 2 parámetros: la clase de la entidad y el ID.");
+        try {
+            Map<String, Object> params;
+            //noinspection unchecked
+            params = (Map<String, Object>) paramsObj;
+            if (params.size() != 2) {
+                LOGGER.error("Se requieren exactamente 2 parámetros: la clase de la entidad y el ID.");
+                throw new IllegalArgumentException("Se requieren exactamente 2 parámetros: la clase de la entidad y el ID.");
+            }
+            Class<?> entityClass = (Class<?>) params.get(FindMapKeys.CLASS);
+            Object id = params.get(FindMapKeys.ID);
+            return em.find(entityClass, id);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            LOGGER.error(illegalArgumentException.getMessage());
+            throw new IllegalArgumentException(illegalArgumentException);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
         }
-        Class<?> entityClass = (Class<?>) params.get(FindMapKeys.CLASS);
-        Object id = params.get(FindMapKeys.ID);
-        return em.find(entityClass, id);
     };
 
     private static class FindMapKeys {
@@ -239,33 +298,53 @@ public class EntityManagerCreator {
     }
 
     private static final BiFunction<EntityManager, String, List<Object>> nativeQuery = (em, query) -> {
-        //noinspection unchecked
-        return em.createNativeQuery(query).getResultList();
+        try {
+            //noinspection unchecked
+            return em.createNativeQuery(query).getResultList();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
 
     private static final BiFunction<EntityManager, String, List<Object>> jpqlQuery = (em, query) -> {
-        //noinspection unchecked
-        return em.createQuery(query).getResultList();
+        try {
+            //noinspection unchecked
+            return em.createQuery(query).getResultList();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
 
     private static final TriFunction<EntityManager, Object, Object, List<Object>> parametrizedQuery = (em, queryObj, paramsObj) -> {
-        //noinspection unchecked
-        Map<String, Object> params = (Map<String, Object>) paramsObj;
-        String query = (String) queryObj;
-        Query q = em.createNativeQuery(query);
-        params.forEach(q::setParameter);
-        //noinspection unchecked
-        return q.getResultList();
+        try {
+            //noinspection unchecked
+            Map<String, Object> params = (Map<String, Object>) paramsObj;
+            String query = (String) queryObj;
+            Query q = em.createNativeQuery(query);
+            params.forEach(q::setParameter);
+            //noinspection unchecked
+            return q.getResultList();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
 
     private static final TriFunction<EntityManager, Object, Object, List<Object>> parametrizedJpqlQuery = (em, queryObj, paramsObj) -> {
-        //noinspection unchecked
-        Map<String, Object> params = (Map<String, Object>) paramsObj;
-        String query = (String) queryObj;
-        Query q = em.createQuery(query);
-        params.forEach(q::setParameter);
-        //noinspection unchecked
-        return q.getResultList();
+        try {
+            //noinspection unchecked
+            Map<String, Object> params = (Map<String, Object>) paramsObj;
+            String query = (String) queryObj;
+            Query q = em.createQuery(query);
+            params.forEach(q::setParameter);
+            //noinspection unchecked
+            return q.getResultList();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
 
     private static class ParametrizedQueryMapKeys {
@@ -274,12 +353,22 @@ public class EntityManagerCreator {
     }
 
     private static final BiConsumer<EntityManager, Object> nativeUpdate = (em, queryObj) -> {
-        String query = (String) queryObj;
-        em.createNativeQuery(query).executeUpdate();
+        try {
+            String query = (String) queryObj;
+            em.createNativeQuery(query).executeUpdate();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
 
     private static final BiConsumer<EntityManager, Object> jpqlUpdate = (em, queryObj) -> {
-        String query = (String) queryObj;
-        em.createQuery(query).executeUpdate();
+        try {
+            String query = (String) queryObj;
+            em.createQuery(query).executeUpdate();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     };
 }

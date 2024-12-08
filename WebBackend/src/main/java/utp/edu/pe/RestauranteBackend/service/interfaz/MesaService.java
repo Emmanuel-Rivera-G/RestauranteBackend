@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface MesaService {
 
-    boolean saveMesa(Mesa mesa);
+    boolean saveMesa(Mesa mesa) throws Exception;
 
-    boolean deleteMesa(Mesa mesa);
+    boolean deleteMesa(Mesa mesa) throws Exception;
 
-    Mesa updateMesa(Mesa mesa);
+    Mesa updateMesa(Mesa mesa) throws Exception;
 
-    List<Mesa> findAllMesas();
+    List<Mesa> findAllMesas() throws Exception;
 
-    Mesa findMesaById(Long id);
+    Mesa findMesaById(Long id) throws Exception;
 
 }

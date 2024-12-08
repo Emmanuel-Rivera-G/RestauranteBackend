@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface PedidoService {
 
-    boolean savePedido(Pedido pedido);
+    boolean savePedido(Pedido pedido) throws Exception;
 
-    boolean deletePedido(Pedido pedido);
+    boolean deletePedido(Pedido pedido) throws Exception;
 
-    Pedido updatePedido(Pedido pedido);
+    Pedido updatePedido(Pedido pedido) throws Exception;
 
-    List<Pedido> findAllPedidos();
+    List<Pedido> findAllPedidos() throws Exception;
 
-    Pedido findPedidoById(Long id);
+    Pedido findPedidoById(Long id) throws Exception;
 }

@@ -2,6 +2,7 @@ package utp.edu.pe.RestauranteBackend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.google.gson.*;
 
 import java.time.LocalDate;
 import java.util.List;

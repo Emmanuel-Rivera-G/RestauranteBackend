@@ -17,31 +17,31 @@ public class MenuDAOImpl extends DAO implements MenuDAO {
     }
 
     @Override
-    public boolean saveMenu(Menu menu) {
+    public boolean saveMenu(Menu menu) throws Exception {
         return saveInstance(entityManager, menu);
     }
 
     @Override
-    public boolean deleteMenu(Menu menu) {
+    public boolean deleteMenu(Menu menu) throws Exception {
         return removeInstance(entityManager, menu);
     }
 
     @Override
-    public Menu updateMenu(Menu menu) {
+    public Menu updateMenu(Menu menu) throws Exception {
         Optional<Menu> optionalMenu = updateInstance(Menu.class, entityManager, menu);
         if (optionalMenu.isEmpty()) throw new RuntimeException("Menú no actualizado.");
         return optionalMenu.get();
     }
 
     @Override
-    public List<Menu> findAllMenus() {
+    public List<Menu> findAllMenus() throws Exception {
         Optional<List<Menu>> optionalMenuList = queryCustomJpql(Menu.class, entityManager, "SELECT m FROM Menu m");
         if (optionalMenuList.isEmpty()) throw new RuntimeException("Lista de menús no encontrada.");
         return optionalMenuList.get();
     }
 
     @Override
-    public Menu findMenuById(Long id) {
+    public Menu findMenuById(Long id) throws Exception {
         Optional<Menu> optionalMenu = findInstanceById(Menu.class, entityManager, id);
         if (optionalMenu.isEmpty()) throw new RuntimeException("Menú no encontrado con id: " + id + ".");
         return optionalMenu.get();

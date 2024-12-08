@@ -16,27 +16,47 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public boolean saveMenu(Menu menuItem) {
-        return menuDAO.saveMenu(menuItem);
+    public boolean saveMenu(Menu menuItem) throws Exception {
+        try {
+            return menuDAO.saveMenu(menuItem);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deleteMenu(Menu menuItem) {
-        return menuDAO.deleteMenu(menuItem);
+    public boolean deleteMenu(Menu menuItem) throws Exception {
+        try {
+            return menuDAO.deleteMenu(menuItem);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Menu updateMenu(Menu menuItem) {
-        return menuDAO.updateMenu(menuItem);
+    public Menu updateMenu(Menu menuItem) throws Exception {
+        try {
+            return menuDAO.updateMenu(menuItem);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Menu> findAllMenus() {
-        return menuDAO.findAllMenus();
+    public List<Menu> findAllMenus() throws Exception {
+        try {
+            return menuDAO.findAllMenus();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Menu findMenuById(Long id) {
-        return menuDAO.findMenuById(id);
+    public Menu findMenuById(Long id) throws Exception {
+        try {
+            return menuDAO.findMenuById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -10,7 +10,7 @@ import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 import utp.edu.pe.server.constants.HttpCodeFallBack;
 import utp.edu.pe.server.constants.HttpStatusCode;
-import utp.edu.pe.utils.LoggerCreator;
+import utp.edu.pe.utils.logger.LoggerCreator;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static utp.edu.pe.server.config.ServletHandler.getterPath;
 import static utp.edu.pe.server.config.ServletHandler.sourcePathArchive;
 
 @WebServlet("/usuario")
@@ -107,17 +106,15 @@ public class UsuarioController extends HttpServletBasic {
                     ""
             );
         } catch (RuntimeException e) {
-            LOGGER.error("Error al procesar la solicitud: " + e.getMessage());
+            LOGGER.error("Error al procesar la solicitud: {}", e.getMessage());
             response.put("Error", e.getMessage());
             this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
         } catch (Exception e) {
-            LOGGER.error("Error interno: " + e.getMessage());
-            this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(),
-                    exchange,
-                    HttpCodeFallBack.ERROR_FALLBACK_500.getFallBack(),
-                    ""
-            );
+            LOGGER.error("Error interno: {}", e.getMessage());
+            response.put("_Operación Exitosa", false);
+            response.put("Error", e.getMessage());
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            return;
         }
     }
 
@@ -126,7 +123,12 @@ public class UsuarioController extends HttpServletBasic {
         Usuario usuario = this.getRequestBodyAsJson(exchange, Usuario.class);
         if (usuario != null)
             if (usuario.getNombreUsuario() != null && usuario.getContrasena() != null) {
-                boolean operacionExitosa = usuarioService.saveUsuario(usuario);
+                boolean operacionExitosa = false;
+                try {
+                    operacionExitosa = usuarioService.saveUsuario(usuario);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 Map<String, Object> response = new TreeMap<>();
                 response.put("_Operación Exitosa", operacionExitosa);
                 response.put("Usuario", usuario);
@@ -139,12 +141,69 @@ public class UsuarioController extends HttpServletBasic {
                     response.put("Error-Contrasena", "La contrasena no puede ser null");
                 this.sendJsonResponse(exchange, HttpStatusCode.NON_AUTHORITATIVE_INFORMATION.getCode(), response);
             }
-        else
-            this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.BAD_REQUEST.getCode(),
-                    exchange,
-                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                    ""
-            );
+        else {
+            Map<String, Object> response = new TreeMap<>();
+            LOGGER.error("Error: {}", "No se pudo convertir el JSON en Usuario");
+            response.put("_Operación Exitosa", false);
+            response.put("Error", "No se pudo convertir el JSON en Usuario");
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            return;
+        }
     }
+
+    @Override
+    public void doPut(HttpExchange exchange) throws IOException {
+        Usuario usuario = this.getRequestBodyAsJson(exchange, Usuario.class);
+        Map<String, Object> response = new TreeMap<>();
+
+        if (usuario != null && usuario.getId() != null) {
+            try {
+                Usuario usuarioActualizado = usuarioService.updateUsuario(usuario);
+                response.put("_Operación Exitosa", true);
+                response.put("Usuario", usuarioActualizado);
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+            } catch (Exception e) {
+                LOGGER.error("Error al actualizar el usuario: {}", e.getMessage());
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            }
+        } else {
+            response.put("_Operación Exitosa", false);
+            response.put("Error", "Usuario o ID no proporcionado.");
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+        }
+    }
+
+    @Override
+    public void doDelete(HttpExchange exchange) throws IOException {
+        Map<String, String> params = this.getQueryParams(exchange);
+        Map<String, Object> response = new TreeMap<>();
+
+        if (params.containsKey("id")) {
+            try {
+                long id = Long.parseLong(params.get("id"));
+                Usuario usuario = usuarioService.findUsuarioById(id);
+                boolean eliminado = usuarioService.deleteUsuario(usuario);
+
+                response.put("_Operación Exitosa", eliminado);
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+            } catch (NumberFormatException e) {
+                LOGGER.error("Error al convertir ID a número: {}", e.getMessage());
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            } catch (Exception e) {
+                LOGGER.error("Error al eliminar el usuario: {}", e.getMessage());
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(), response);
+            }
+        } else {
+            response.put("_Operación Exitosa", false);
+            response.put("Error", "Se necesita del ID para eliminar.");
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+        }
+    }
+
 }

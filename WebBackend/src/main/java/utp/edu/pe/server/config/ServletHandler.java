@@ -22,7 +22,7 @@ import static utp.edu.pe.server.constants.HttpStatusCode.METHOD_NOT_ALLOWED;
 import static utp.edu.pe.server.constants.SourceContent.SOURCE;
 
 import utp.edu.pe.server.constants.HttpStatusCode;
-import utp.edu.pe.utils.LoggerCreator;
+import utp.edu.pe.utils.logger.LoggerCreator;
 
 public class ServletHandler implements HttpHandler {
     
@@ -123,7 +123,6 @@ public class ServletHandler implements HttpHandler {
                 os.write(response);
             }
         }catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage());
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write("".getBytes());

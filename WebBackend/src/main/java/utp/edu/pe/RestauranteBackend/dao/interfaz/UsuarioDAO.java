@@ -6,17 +6,17 @@ import java.util.List;
 
 public interface UsuarioDAO {
 
-    boolean saveUsuario(Usuario usuario);
+    boolean saveUsuario(Usuario usuario) throws Exception;
 
-    boolean deleteUsuario(Usuario usuario);
+    boolean deleteUsuario(Usuario usuario) throws Exception;
 
-    Usuario updateUsuario(Usuario usuario);
+    Usuario updateUsuario(Usuario usuario) throws Exception;
 
-    List<Usuario> findAllUsuarios();
+    List<Usuario> findAllUsuarios() throws Exception;
 
-    Usuario findUsuarioById(Long id);
+    Usuario findUsuarioById(Long id) throws Exception;
 
     Usuario findUsuarioByNombreUsuairo(String nombre) throws Exception;
 
-    List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio);
+    List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio) throws Exception;
 }

@@ -16,27 +16,47 @@ public class PagoServiceImpl implements PagoService {
     }
 
     @Override
-    public boolean savePago(Pago pago) {
-        return pagoDAO.savePago(pago);
+    public boolean savePago(Pago pago) throws Exception {
+        try {
+            return pagoDAO.savePago(pago);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deletePago(Pago pago) {
-        return pagoDAO.deletePago(pago);
+    public boolean deletePago(Pago pago) throws Exception {
+        try {
+            return pagoDAO.deletePago(pago);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Pago updatePago(Pago pago) {
-        return pagoDAO.updatePago(pago);
+    public Pago updatePago(Pago pago) throws Exception {
+        try {
+            return pagoDAO.updatePago(pago);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Pago> findAllPagos() {
-        return pagoDAO.findAllPagos();
+    public List<Pago> findAllPagos() throws Exception {
+        try {
+            return pagoDAO.findAllPagos();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Pago findPagoById(Long id) {
-        return pagoDAO.findPagoById(id);
+    public Pago findPagoById(Long id) throws Exception {
+        try {
+            return pagoDAO.findPagoById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

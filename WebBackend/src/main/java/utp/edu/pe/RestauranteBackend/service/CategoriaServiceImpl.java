@@ -16,27 +16,47 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
-    public boolean saveCategoria(Categoria categoria) {
-        return categoriaDAO.saveCategoria(categoria);
+    public boolean saveCategoria(Categoria categoria) throws Exception {
+        try {
+            return categoriaDAO.saveCategoria(categoria);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deleteCategoria(Categoria categoria) {
-        return categoriaDAO.deleteCategoria(categoria);
+    public boolean deleteCategoria(Categoria categoria) throws Exception {
+        try {
+            return categoriaDAO.deleteCategoria(categoria);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Categoria updateCategoria(Categoria categoria) {
-        return categoriaDAO.updateCategoria(categoria);
+    public Categoria updateCategoria(Categoria categoria) throws Exception {
+        try {
+            return categoriaDAO.updateCategoria(categoria);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Categoria> findAllCategorias() {
-        return categoriaDAO.findAllCategorias();
+    public List<Categoria> findAllCategorias() throws Exception {
+        try {
+            return categoriaDAO.findAllCategorias();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Categoria findCategoriaById(Long id) {
-        return categoriaDAO.findCategoriaById(id);
+    public Categoria findCategoriaById(Long id) throws Exception {
+        try {
+            return categoriaDAO.findCategoriaById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

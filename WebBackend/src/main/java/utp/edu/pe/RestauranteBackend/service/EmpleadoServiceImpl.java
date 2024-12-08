@@ -16,27 +16,47 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     }
 
     @Override
-    public boolean saveEmpleado(Empleado empleado) {
-        return empleadoDAO.saveEmpleado(empleado);
+    public boolean saveEmpleado(Empleado empleado) throws Exception {
+        try {
+            return empleadoDAO.saveEmpleado(empleado);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deleteEmpleado(Empleado empleado) {
-        return empleadoDAO.deleteEmpleado(empleado);
+    public boolean deleteEmpleado(Empleado empleado) throws Exception {
+        try {
+            return empleadoDAO.deleteEmpleado(empleado);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Empleado updateEmpleado(Empleado empleado) {
-        return empleadoDAO.updateEmpleado(empleado);
+    public Empleado updateEmpleado(Empleado empleado) throws Exception {
+        try {
+            return empleadoDAO.updateEmpleado(empleado);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Empleado> findAllEmpleados() {
-        return empleadoDAO.findAllEmpleados();
+    public List<Empleado> findAllEmpleados() throws Exception {
+        try {
+            return empleadoDAO.findAllEmpleados();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Empleado findEmpleadoById(Long id) {
-        return empleadoDAO.findEmpleadoById(id);
+    public Empleado findEmpleadoById(Long id) throws Exception {
+        try {
+            return empleadoDAO.findEmpleadoById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

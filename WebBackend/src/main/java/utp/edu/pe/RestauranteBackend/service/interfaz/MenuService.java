@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface MenuService {
 
-    boolean saveMenu(Menu menuItem);
+    boolean saveMenu(Menu menuItem) throws Exception;
 
-    boolean deleteMenu(Menu menuItem);
+    boolean deleteMenu(Menu menuItem) throws Exception;
 
-    Menu updateMenu(Menu menuItem);
+    Menu updateMenu(Menu menuItem) throws Exception;
 
-    List<Menu> findAllMenus();
+    List<Menu> findAllMenus() throws Exception;
 
-    Menu findMenuById(Long id);
+    Menu findMenuById(Long id) throws Exception;
 
 }

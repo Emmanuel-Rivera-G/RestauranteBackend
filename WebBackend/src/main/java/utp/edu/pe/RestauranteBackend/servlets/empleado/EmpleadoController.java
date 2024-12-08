@@ -10,7 +10,7 @@ import utp.edu.pe.server.components.HttpServletBasic;
 import utp.edu.pe.server.components.WebServlet;
 import utp.edu.pe.server.constants.HttpCodeFallBack;
 import utp.edu.pe.server.constants.HttpStatusCode;
-import utp.edu.pe.utils.LoggerCreator;
+import utp.edu.pe.utils.logger.LoggerCreator;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,20 +53,16 @@ public class EmpleadoController extends HttpServletBasic {
 
         } catch (NumberFormatException e) {
             LOGGER.error("Error al convertir ID a número: " + e.getMessage());
-            this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.BAD_REQUEST.getCode(),
-                    exchange,
-                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                    ""
-            );
+            response.put("_Operación Exitosa", false);
+            response.put("Error", e.getMessage());
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            return;
         } catch (Exception e) {
             LOGGER.error("Error al procesar la solicitud: " + e.getMessage());
-            this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(),
-                    exchange,
-                    HttpCodeFallBack.ERROR_FALLBACK_500.getFallBack(),
-                    ""
-            );
+            response.put("_Operación Exitosa", false);
+            response.put("Error", e.getMessage());
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            return;
         }
     }
 
@@ -74,18 +70,28 @@ public class EmpleadoController extends HttpServletBasic {
     public void doPost(HttpExchange exchange) throws IOException {
         Empleado empleado = this.getRequestBodyAsJson(exchange, Empleado.class);
         if (empleado != null) {
-            boolean operacionExitosa = empleadoService.saveEmpleado(empleado);
+            boolean operacionExitosa = false;
+            try {
+                operacionExitosa = empleadoService.saveEmpleado(empleado);
+            } catch (Exception e) {
+                Map<String, Object> response = new TreeMap<>();
+                LOGGER.error("Error interno: {}", e.getMessage());
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+                return;
+            }
             Map<String, Object> response = new TreeMap<>();
             response.put("_Operación Exitosa", operacionExitosa);
             response.put("Empleado", empleado);
             this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
         } else {
-            this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.BAD_REQUEST.getCode(),
-                    exchange,
-                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                    ""
-            );
+            Map<String, Object> response = new TreeMap<>();
+            LOGGER.error("Error interno: {}", "No se pudo parsear el JSON a Empleado");
+            response.put("_Operación Exitosa", false);
+            response.put("Error", "No se pudo parsear el JSON a Empleado");
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            return;
         }
     }
 
@@ -93,7 +99,17 @@ public class EmpleadoController extends HttpServletBasic {
     public void doPut(HttpExchange exchange) throws IOException {
         Empleado empleado = this.getRequestBodyAsJson(exchange, Empleado.class);
         if (empleado != null && empleado.getId() != null) {
-            Empleado empleadoActualizado = empleadoService.updateEmpleado(empleado);
+            Empleado empleadoActualizado = null;
+            try {
+                empleadoActualizado = empleadoService.updateEmpleado(empleado);
+            } catch (Exception e) {
+                Map<String, Object> response = new TreeMap<>();
+                LOGGER.error("Error interno: {}", e.getMessage());
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+                return;
+            }
             Map<String, Object> response = new TreeMap<>();
             response.put("_Operación Exitosa", true);
             response.put("Empleado", empleadoActualizado);
@@ -118,20 +134,26 @@ public class EmpleadoController extends HttpServletBasic {
                 this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
             } catch (NumberFormatException e) {
                 LOGGER.error("Error al convertir ID a número: " + e.getMessage());
-                this.sendAnyHtmlFileResponse(
-                        HttpStatusCode.BAD_REQUEST.getCode(),
-                        exchange,
-                        HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                        ""
-                );
+                Map<String, Object> response = new TreeMap<>();
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+                return;
+            } catch (Exception e) {
+                Map<String, Object> response = new TreeMap<>();
+                LOGGER.error("Error interno: {}", e.getMessage());
+                response.put("_Operación Exitosa", false);
+                response.put("Error", e.getMessage());
+                this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+                return;
             }
         } else {
-            this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.BAD_REQUEST.getCode(),
-                    exchange,
-                    HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
-                    ""
-            );
+            Map<String, Object> response = new TreeMap<>();
+            LOGGER.error("Error interno: {}", "Se necesita del Id para eliminar un Empleado");
+            response.put("_Operación Exitosa", false);
+            response.put("Error", "Se necesita del Id para eliminar un Empleado");
+            this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
+            return;
         }
     }
 }

@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface CategoriaService {
 
-    boolean saveCategoria(Categoria categoria);
+    boolean saveCategoria(Categoria categoria) throws Exception;
 
-    boolean deleteCategoria(Categoria categoria);
+    boolean deleteCategoria(Categoria categoria) throws Exception;
 
-    Categoria updateCategoria(Categoria categoria);
+    Categoria updateCategoria(Categoria categoria) throws Exception;
 
-    List<Categoria> findAllCategorias();
+    List<Categoria> findAllCategorias() throws Exception;
 
-    Categoria findCategoriaById(Long id);
+    Categoria findCategoriaById(Long id) throws Exception;
 
 }

@@ -16,27 +16,47 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public boolean savePedido(Pedido pedido) {
-        return pedidoDAO.savePedido(pedido);
+    public boolean savePedido(Pedido pedido) throws Exception {
+        try {
+            return pedidoDAO.savePedido(pedido);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deletePedido(Pedido pedido) {
-        return pedidoDAO.deletePedido(pedido);
+    public boolean deletePedido(Pedido pedido) throws Exception {
+        try {
+            return pedidoDAO.deletePedido(pedido);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Pedido updatePedido(Pedido pedido) {
-        return pedidoDAO.updatePedido(pedido);
+    public Pedido updatePedido(Pedido pedido) throws Exception {
+        try {
+            return pedidoDAO.updatePedido(pedido);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Pedido> findAllPedidos() {
-        return pedidoDAO.findAllPedidos();
+    public List<Pedido> findAllPedidos() throws Exception {
+        try {
+            return pedidoDAO.findAllPedidos();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Pedido findPedidoById(Long id) {
-        return pedidoDAO.findPedidoById(id);
+    public Pedido findPedidoById(Long id) throws Exception {
+        try {
+            return pedidoDAO.findPedidoById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

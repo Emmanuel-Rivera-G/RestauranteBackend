@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface EmpleadoDAO {
 
-    boolean saveEmpleado(Empleado empleado);
+    boolean saveEmpleado(Empleado empleado) throws Exception;
 
-    boolean deleteEmpleado(Empleado empleado);
+    boolean deleteEmpleado(Empleado empleado) throws Exception;
 
-    Empleado updateEmpleado(Empleado empleado);
+    Empleado updateEmpleado(Empleado empleado) throws Exception;
 
-    List<Empleado> findAllEmpleados();
+    List<Empleado> findAllEmpleados() throws Exception;
 
-    Empleado findEmpleadoById(Long id);
+    Empleado findEmpleadoById(Long id) throws Exception;
 
 }

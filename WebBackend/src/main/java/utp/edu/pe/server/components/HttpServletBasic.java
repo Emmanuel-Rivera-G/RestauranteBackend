@@ -1,6 +1,7 @@
 package utp.edu.pe.server.components;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
@@ -13,19 +14,22 @@ import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
-import static utp.edu.pe.utils.LoggerCreator.getLogger;
+import utp.edu.pe.utils.gson.GsonFactory;
+
+import static utp.edu.pe.utils.logger.LoggerCreator.getLogger;
 import static utp.edu.pe.server.config.ServletHandler.*;
 
 public abstract class HttpServletBasic {
     
     private final Logger LOGGER = getLogger(HttpServletBasic.class);
     
-    private final Gson gson = new Gson();
+    private final Gson gson;
 
     protected final EntityManager entityManager;
 
     public HttpServletBasic(EntityManager entityManager) {
         this.entityManager = entityManager;
+        this.gson = GsonFactory.createGson();
     }
     
     public void doGet(HttpExchange exchange) throws IOException {
@@ -197,12 +201,12 @@ public abstract class HttpServletBasic {
      * Usuario usuario = getRequestBodyAsJson(exchange, Usuario.class);
      * }</pre>
      */
-    protected <T> T getRequestBodyAsJson(HttpExchange exchange, Class<T> type) throws IOException {
+    protected <T> T getRequestBodyAsJson(HttpExchange exchange, Class<T> type) {
         try (InputStream is = exchange.getRequestBody();
-             InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             return gson.fromJson(reader, type);
-        } catch (IOException ioe) {
-            LOGGER.error(ioe.getMessage());
+        } catch (IOException | JsonIOException e) {
+            LOGGER.error(e.getMessage());
             return null;
         }
     }

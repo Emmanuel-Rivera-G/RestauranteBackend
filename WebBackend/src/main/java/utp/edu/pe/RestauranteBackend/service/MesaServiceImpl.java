@@ -16,27 +16,47 @@ public class MesaServiceImpl implements MesaService {
     }
 
     @Override
-    public boolean saveMesa(Mesa mesa) {
-        return mesaDAO.saveMesa(mesa);
+    public boolean saveMesa(Mesa mesa) throws Exception {
+        try {
+            return mesaDAO.saveMesa(mesa);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deleteMesa(Mesa mesa) {
-        return mesaDAO.deleteMesa(mesa);
+    public boolean deleteMesa(Mesa mesa) throws Exception {
+        try {
+            return mesaDAO.deleteMesa(mesa);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Mesa updateMesa(Mesa mesa) {
-        return mesaDAO.updateMesa(mesa);
+    public Mesa updateMesa(Mesa mesa) throws Exception {
+        try {
+            return mesaDAO.updateMesa(mesa);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Mesa> findAllMesas() {
-        return mesaDAO.findAllMesas();
+    public List<Mesa> findAllMesas() throws Exception {
+        try {
+            return mesaDAO.findAllMesas();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Mesa findMesaById(Long id) {
-        return mesaDAO.findMesaById(id);
+    public Mesa findMesaById(Long id) throws Exception {
+        try {
+            return mesaDAO.findMesaById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -16,31 +16,31 @@ public class PagoDAOImpl extends DAO implements PagoDAO {
         super(entityManager);
     }
     @Override
-    public boolean savePago(Pago pago) {
+    public boolean savePago(Pago pago) throws Exception {
         return saveInstance(entityManager, pago);
     }
 
     @Override
-    public boolean deletePago(Pago pago) {
+    public boolean deletePago(Pago pago) throws Exception {
         return removeInstance(entityManager, pago);
     }
 
     @Override
-    public Pago updatePago(Pago pago) {
+    public Pago updatePago(Pago pago) throws Exception {
         Optional<Pago> optionalPago = updateInstance(Pago.class, entityManager, pago);
         if (optionalPago.isEmpty()) throw new RuntimeException("Pago no actualizado.");
         return optionalPago.get();
     }
 
     @Override
-    public List<Pago> findAllPagos() {
+    public List<Pago> findAllPagos() throws Exception {
         Optional<List<Pago>> optionalPagoList = queryCustomJpql(Pago.class, entityManager, "SELECT p FROM Pago p");
         if (optionalPagoList.isEmpty()) throw new RuntimeException("Lista de pagos no encontrada.");
         return optionalPagoList.get();
     }
 
     @Override
-    public Pago findPagoById(Long id) {
+    public Pago findPagoById(Long id) throws Exception {
         Optional<Pago> optionalPago = findInstanceById(Pago.class, entityManager, id);
         if (optionalPago.isEmpty()) throw new RuntimeException("Pago no encontrado con id: " + id + ".");
         return optionalPago.get();

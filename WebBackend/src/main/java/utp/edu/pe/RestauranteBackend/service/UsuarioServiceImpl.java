@@ -5,9 +5,8 @@ import org.slf4j.Logger;
 import utp.edu.pe.RestauranteBackend.dao.UsuarioDAOImpl;
 import utp.edu.pe.RestauranteBackend.dao.interfaz.UsuarioDAO;
 import utp.edu.pe.RestauranteBackend.model.Usuario;
-import utp.edu.pe.RestauranteBackend.service.interfaz.Authenticable;
 import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
-import utp.edu.pe.utils.LoggerCreator;
+import utp.edu.pe.utils.logger.LoggerCreator;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public boolean autenticar(String ...params) {
+    public boolean autenticar(String ...params) throws Exception {
         try {
             String usarname = params[0];
             String pass = params[1];
@@ -39,35 +38,55 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public boolean registrar(String[] array) {
+    public boolean registrar(String[] array) throws Exception {
         String correo;
         String nombre;
         return true;
     }
 
     @Override
-    public boolean saveUsuario(Usuario usuario) {
-        return usuarioDAO.saveUsuario(usuario);
+    public boolean saveUsuario(Usuario usuario) throws Exception {
+        try {
+            return usuarioDAO.saveUsuario(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean deleteUsuario(Usuario usuario) {
-        return usuarioDAO.deleteUsuario(usuario);
+    public boolean deleteUsuario(Usuario usuario) throws Exception {
+        try {
+            return usuarioDAO.deleteUsuario(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Usuario updateUsuario(Usuario usuario) {
-        return usuarioDAO.updateUsuario(usuario);
+    public Usuario updateUsuario(Usuario usuario) throws Exception {
+        try {
+            return usuarioDAO.updateUsuario(usuario);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public List<Usuario> findAllUsuarios() {
-        return usuarioDAO.findAllUsuarios();
+    public List<Usuario> findAllUsuarios() throws Exception {
+        try {
+            return usuarioDAO.findAllUsuarios();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Usuario findUsuarioById(Long id) {
-        return usuarioDAO.findUsuarioById(id);
+    public Usuario findUsuarioById(Long id) throws Exception {
+        try {
+            return usuarioDAO.findUsuarioById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -76,7 +95,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio) {
-        return usuarioDAO.findUsuariosByNombreUsuarioStartsWith(nombreInicio);
+    public List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio) throws Exception {
+        try {
+            return usuarioDAO.findUsuariosByNombreUsuarioStartsWith(nombreInicio);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

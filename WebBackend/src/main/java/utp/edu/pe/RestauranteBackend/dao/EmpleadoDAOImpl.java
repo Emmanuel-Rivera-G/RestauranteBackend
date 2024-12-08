@@ -17,31 +17,31 @@ public class EmpleadoDAOImpl extends DAO implements EmpleadoDAO {
     }
 
     @Override
-    public boolean saveEmpleado(Empleado empleado) {
+    public boolean saveEmpleado(Empleado empleado) throws Exception {
         return saveInstance(entityManager, empleado);
     }
 
     @Override
-    public boolean deleteEmpleado(Empleado empleado) {
+    public boolean deleteEmpleado(Empleado empleado) throws Exception {
         return removeInstance(entityManager, empleado);
     }
 
     @Override
-    public Empleado updateEmpleado(Empleado empleado) {
+    public Empleado updateEmpleado(Empleado empleado) throws Exception {
         Optional<Empleado> optionalEmpleado = updateInstance(Empleado.class, entityManager, empleado);
         if (optionalEmpleado.isEmpty()) throw new RuntimeException("Empleado no actualizado.");
         return optionalEmpleado.get();
     }
 
     @Override
-    public List<Empleado> findAllEmpleados() {
+    public List<Empleado> findAllEmpleados() throws Exception {
         Optional<List<Empleado>> optionalEmpleadoList = queryCustomJpql(Empleado.class, entityManager, "SELECT e FROM Empleado e");
         if (optionalEmpleadoList.isEmpty()) throw new RuntimeException("Lista de empleados no encontrada.");
         return optionalEmpleadoList.get();
     }
 
     @Override
-    public Empleado findEmpleadoById(Long id) {
+    public Empleado findEmpleadoById(Long id) throws Exception {
         Optional<Empleado> optionalEmpleado = findInstanceById(Empleado.class, entityManager, id);
         if (optionalEmpleado.isEmpty()) throw new RuntimeException("Empleado no encontrado con id: " + id + ".");
         return optionalEmpleado.get();
