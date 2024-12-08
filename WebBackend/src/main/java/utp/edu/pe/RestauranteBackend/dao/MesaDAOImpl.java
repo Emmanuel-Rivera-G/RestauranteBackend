@@ -35,7 +35,7 @@ public class MesaDAOImpl extends DAO implements MesaDAO {
 
     @Override
     public List<Mesa> findAllMesas() {
-        Optional<List<Mesa>> optionalMesaList = queryCustomNativeSql(Mesa.class, entityManager, "SELECT * FROM mesas");
+        Optional<List<Mesa>> optionalMesaList = queryCustomJpql(Mesa.class, entityManager, "SELECT m FROM Mesa m");
         if (optionalMesaList.isEmpty()) throw new RuntimeException("Lista de mesas no encontrada.");
         return optionalMesaList.get();
     }

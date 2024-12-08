@@ -35,7 +35,7 @@ public class MenuDAOImpl extends DAO implements MenuDAO {
 
     @Override
     public List<Menu> findAllMenus() {
-        Optional<List<Menu>> optionalMenuList = queryCustomNativeSql(Menu.class, entityManager, "SELECT * FROM menu");
+        Optional<List<Menu>> optionalMenuList = queryCustomJpql(Menu.class, entityManager, "SELECT m FROM Menu m");
         if (optionalMenuList.isEmpty()) throw new RuntimeException("Lista de menús no encontrada.");
         return optionalMenuList.get();
     }

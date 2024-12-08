@@ -35,7 +35,7 @@ public class EmpleadoDAOImpl extends DAO implements EmpleadoDAO {
 
     @Override
     public List<Empleado> findAllEmpleados() {
-        Optional<List<Empleado>> optionalEmpleadoList = queryCustomNativeSql(Empleado.class, entityManager, "SELECT * FROM empleados");
+        Optional<List<Empleado>> optionalEmpleadoList = queryCustomJpql(Empleado.class, entityManager, "SELECT e FROM Empleado e");
         if (optionalEmpleadoList.isEmpty()) throw new RuntimeException("Lista de empleados no encontrada.");
         return optionalEmpleadoList.get();
     }

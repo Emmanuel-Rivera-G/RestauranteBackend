@@ -42,6 +42,8 @@ public class UsuarioController extends HttpServletBasic {
             if (params.isEmpty()) {
                 response.put("_Operación Exitosa", true);
                 response.put("body", usuarioService.findAllUsuarios());
+                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                return;
             }
             if (params.containsKey("id") && params.containsKey("nombreUsuario")) {
                 long id = Long.parseLong(params.get("id"));
@@ -73,9 +75,14 @@ public class UsuarioController extends HttpServletBasic {
             if (params.containsKey("nombreUsuario")) {
                 String nombreUsuario = params.get("nombreUsuario");
                 Usuario usuario = usuarioService.findUsuarioByNombreUsuairo(nombreUsuario);
-                response.put("Usuario", usuario);
-                response.put("_Operación Exitosa", true);
-                this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                if (usuario != null) {
+                    response.put("Usuario", usuario);
+                    response.put("_Operación Exitosa", true);
+                    this.sendJsonResponse(exchange, HttpStatusCode.OK.getCode(), response);
+                    return;
+                }
+                response.put("_Operación Exitosa", false);
+                this.sendJsonResponse(exchange, HttpStatusCode.INTERNAL_SERVER_ERROR.getCode(), response);
                 return;
             }
 
@@ -90,7 +97,7 @@ public class UsuarioController extends HttpServletBasic {
 
             response.put("Error", "Parámetros inválidos o insuficientes.");
             this.sendJsonResponse(exchange, HttpStatusCode.BAD_REQUEST.getCode(), response);
-
+            return;
         } catch (NumberFormatException e) {
             LOGGER.error("Error al convertir ID a número: " + e.getMessage());
             this.sendAnyHtmlFileResponse(

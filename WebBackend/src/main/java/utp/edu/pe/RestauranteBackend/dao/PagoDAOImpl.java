@@ -34,7 +34,7 @@ public class PagoDAOImpl extends DAO implements PagoDAO {
 
     @Override
     public List<Pago> findAllPagos() {
-        Optional<List<Pago>> optionalPagoList = queryCustomNativeSql(Pago.class, entityManager, "SELECT * FROM pagos;");
+        Optional<List<Pago>> optionalPagoList = queryCustomJpql(Pago.class, entityManager, "SELECT p FROM Pago p");
         if (optionalPagoList.isEmpty()) throw new RuntimeException("Lista de pagos no encontrada.");
         return optionalPagoList.get();
     }

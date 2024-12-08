@@ -59,14 +59,15 @@ public enum HttpCodeFallBack {
 
     private static String centerInScreen(String content) {
         return """
-                    <body style='background-color: black;'
+                    <body style='background-color: black;'>
                         <div style='
-                         display: flex;
-                         justify-content: center;
-                         align-items: center;
-                         height: 100vh;
-                         font-family: Arial, sans-serif;
-                         color: #eee;
+                            display: flex;
+                            flex-direction: column;z
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh; 
+                            font-family: Arial, sans-serif; 
+                            color: #eee;
                         '>
                         """ + content + """
                         </div>

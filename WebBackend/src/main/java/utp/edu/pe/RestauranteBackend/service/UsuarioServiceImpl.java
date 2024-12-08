@@ -1,15 +1,19 @@
 package utp.edu.pe.RestauranteBackend.service;
 
 import jakarta.persistence.EntityManager;
+import org.slf4j.Logger;
 import utp.edu.pe.RestauranteBackend.dao.UsuarioDAOImpl;
 import utp.edu.pe.RestauranteBackend.dao.interfaz.UsuarioDAO;
 import utp.edu.pe.RestauranteBackend.model.Usuario;
 import utp.edu.pe.RestauranteBackend.service.interfaz.Authenticable;
 import utp.edu.pe.RestauranteBackend.service.interfaz.UsuarioService;
+import utp.edu.pe.utils.LoggerCreator;
 
 import java.util.List;
 
 public class UsuarioServiceImpl implements UsuarioService {
+
+    private final static Logger LOGGER = LoggerCreator.getLogger(UsuarioServiceImpl.class);
 
     private final UsuarioDAO usuarioDAO;
 
@@ -18,15 +22,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public boolean autenticar(String ...params) throws NullPointerException {
-        String user = params[0];
-        String pass = params[1];
-        System.out.println("Usuario: " + user + " Pass: " + pass);
-        Usuario usuario = usuarioDAO.findUsuarioByNombreUsuairo(user);
-        System.out.println(usuario);
-        if (usuario != null) {
-            return usuario.getContrasena().compareTo(pass) == 0;
-        } else {
+    public boolean autenticar(String ...params) {
+        try {
+            String usarname = params[0];
+            String pass = params[1];
+            Usuario usuario = usuarioDAO.findUsuarioByNombreUsuairo(usarname);
+            if (usuario != null) {
+                return usuario.getContrasena().compareTo(pass) == 0;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return false;
         }
     }
@@ -64,7 +71,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario findUsuarioByNombreUsuairo(String nombre) {
+    public Usuario findUsuarioByNombreUsuairo(String nombre) throws Exception {
         return usuarioDAO.findUsuarioByNombreUsuairo(nombre);
     }
 

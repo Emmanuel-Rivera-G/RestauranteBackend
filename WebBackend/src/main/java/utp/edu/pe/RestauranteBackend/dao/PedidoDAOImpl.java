@@ -35,7 +35,7 @@ public class PedidoDAOImpl extends DAO implements PedidoDAO {
 
     @Override
     public List<Pedido> findAllPedidos() {
-        Optional<List<Pedido>> optionalPedidoList = queryCustomNativeSql(Pedido.class, entityManager, "SELECT * FROM pedidos");
+        Optional<List<Pedido>> optionalPedidoList = queryCustomJpql(Pedido.class, entityManager, "SELECT p FROM Pedido p");
         if (optionalPedidoList.isEmpty()) throw new RuntimeException("Lista de pedidos no encontrada.");
         return optionalPedidoList.get();
     }

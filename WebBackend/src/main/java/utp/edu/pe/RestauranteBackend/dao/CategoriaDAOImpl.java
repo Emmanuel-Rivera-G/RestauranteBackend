@@ -35,7 +35,7 @@ public class CategoriaDAOImpl extends DAO implements CategoriaDAO {
 
     @Override
     public List<Categoria> findAllCategorias() {
-        Optional<List<Categoria>> optionalCategoriaList = queryCustomNativeSql(Categoria.class, entityManager, "SELECT * FROM categorias");
+        Optional<List<Categoria>> optionalCategoriaList = queryCustomJpql(Categoria.class, entityManager, "SELECT c FROM Categoria c");
         if (optionalCategoriaList.isEmpty()) throw new RuntimeException("Lista de categorías no encontrada.");
         return optionalCategoriaList.get();
     }

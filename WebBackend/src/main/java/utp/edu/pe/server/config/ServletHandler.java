@@ -34,7 +34,7 @@ public class ServletHandler implements HttpHandler {
     private final static String DEFAULT_METHODS = "GET, POST, PUT, DELETE";
     private final static String DEFAULT_HEADERS_RESPONSE = "Content-Type, Authorization, X-Requested-With";
     
-    private final Logger LOGGER = LoggerCreator.getLogger(ServletHandler.class);
+    private final static Logger LOGGER = LoggerCreator.getLogger(ServletHandler.class);
 
     private final Map<String, HttpServletBasic> servlets = new HashMap<>();
     private final static String webSource = SOURCE;
@@ -115,10 +115,19 @@ public class ServletHandler implements HttpHandler {
     }
 
     public static void handleAnyArchiveHtml(int code, HttpExchange exchange, String fallback, Path filePathResponse) throws IOException {
-        byte[] response = (Files.exists(filePathResponse)) ? Files.readAllBytes(filePathResponse) : fallback.getBytes();
-        exchange.sendResponseHeaders(code, response.length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(response);
+        try {
+            boolean fileExist = filePathResponse.toString().compareTo("pages") != 0 && Files.exists(filePathResponse);
+            byte[] response = (fileExist) ? Files.readAllBytes(filePathResponse) : fallback.getBytes();
+            exchange.sendResponseHeaders(code, response.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write("".getBytes());
+            }
         }
     }
     

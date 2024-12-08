@@ -33,7 +33,7 @@ public class AuthController extends HttpServletBasic {
             contrasena = params.get("contrasena");
         } else {
             this.sendAnyHtmlFileResponse(
-                    HttpStatusCode.BAD_REQUEST.getCode(),
+                    HttpStatusCode.NOT_FOUND.getCode(),
                     exchange,
                     HttpCodeFallBack.ERROR_FALLBACK_400.getFallBack(),
                     ""
@@ -53,7 +53,6 @@ public class AuthController extends HttpServletBasic {
                     HttpCodeFallBack.ERROR_FALLBACK_401.getFallBack(),
                     ""
             );
-            System.err.println("Error en AuthController");
         }
     }
 }

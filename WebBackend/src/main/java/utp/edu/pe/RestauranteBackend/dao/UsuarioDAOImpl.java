@@ -1,9 +1,11 @@
 package utp.edu.pe.RestauranteBackend.dao;
 
 import jakarta.persistence.EntityManager;
+import org.slf4j.Logger;
 import utp.edu.pe.RestauranteBackend.dao.abstracto.DAO;
 import utp.edu.pe.RestauranteBackend.dao.interfaz.UsuarioDAO;
 import utp.edu.pe.RestauranteBackend.model.Usuario;
+import utp.edu.pe.utils.LoggerCreator;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.TreeMap;
 import static utp.edu.pe.server.config.EntityManagerCreator.*;
 
 public class UsuarioDAOImpl extends DAO implements UsuarioDAO {
+
+    private final static Logger LOGGER = LoggerCreator.getLogger(UsuarioDAOImpl.class);
 
     public UsuarioDAOImpl(EntityManager entityManager) {
         super(entityManager);
@@ -37,7 +41,7 @@ public class UsuarioDAOImpl extends DAO implements UsuarioDAO {
 
     @Override
     public List<Usuario> findAllUsuarios() {
-        Optional<List<Usuario>> optionalUsuarioList = queryCustomNativeSql(Usuario.class, entityManager, "SELECT * FROM usuarios");
+        Optional<List<Usuario>> optionalUsuarioList = queryCustomJpql(Usuario.class, entityManager, "SELECT u FROM Usuario u");
         if (optionalUsuarioList.isEmpty()) throw new RuntimeException("Lista de usuarios no encontrada.");
         return optionalUsuarioList.get();
     }
@@ -50,19 +54,21 @@ public class UsuarioDAOImpl extends DAO implements UsuarioDAO {
     }
 
     @Override
-    public Usuario findUsuarioByNombreUsuairo(String nombre) {
+    public Usuario findUsuarioByNombreUsuairo(String nombre) throws Exception {
         try {
             Map<String, Object> params = new TreeMap<>();
             params.put("nombreUsuario", nombre);
-            Optional<List<Usuario>> optionalUsuarioList = parametrizedQueryCustomNativeSql(Usuario.class, entityManager, "SELECT * FROM usuarios WHERE nombre_usuario = :nombreUsuario", params);
+            Optional<List<Usuario>> optionalUsuarioList = parametrizedQueryJpql(Usuario.class, entityManager, "SELECT u FROM Usuario u WHERE u.nombreUsuario = :nombreUsuario", params);
             if (optionalUsuarioList.isEmpty()) throw new RuntimeException("Usuario no entrado con nombre:" + nombre + ".");
             List<Usuario> listaUsuario = optionalUsuarioList.get();
             if (listaUsuario.size() == 1)
                 return listaUsuario.getFirst();
+            else if (listaUsuario.size() >= 2)
+                throw new RuntimeException("Usuario encontrado más de una vez con nombre: " + nombre + ".");
             else
-                throw new RuntimeException("Usuario encontrodo más de una vez con nombre:" + nombre + ".");
+                throw new RuntimeException("Usuario no encontrado: " + nombre + ".");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            LOGGER.error(e.getMessage());
             return null;
         }
     }
@@ -71,8 +77,8 @@ public class UsuarioDAOImpl extends DAO implements UsuarioDAO {
         Map<String, Object> params = new TreeMap<>();
         params.put("nombreUsuario", nombreInicio + "%");
 
-        String query = "SELECT * FROM usuarios WHERE nombre_usuario LIKE :nombreUsuario";
-        Optional<List<Usuario>> optionalUsuarioList = parametrizedQueryCustomNativeSql(Usuario.class, entityManager, query, params);
+        String query = "SELECT u FROM Usuario u WHERE u.nombreUsuario LIKE :nombreUsuario";
+        Optional<List<Usuario>> optionalUsuarioList = parametrizedQueryJpql(Usuario.class, entityManager, query, params);
 
         return optionalUsuarioList.orElseThrow(() ->
                 new RuntimeException("No se encontraron usuarios cuyo nombre inicie con: " + nombreInicio)

@@ -16,7 +16,7 @@ public interface UsuarioDAO {
 
     Usuario findUsuarioById(Long id);
 
-    Usuario findUsuarioByNombreUsuairo(String nombre);
+    Usuario findUsuarioByNombreUsuairo(String nombre) throws Exception;
 
     List<Usuario> findUsuariosByNombreUsuarioStartsWith(String nombreInicio);
 }

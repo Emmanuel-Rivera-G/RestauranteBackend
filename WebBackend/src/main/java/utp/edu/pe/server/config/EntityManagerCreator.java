@@ -113,9 +113,16 @@ public class EntityManagerCreator {
         return executeInTransaction(clase, entityManager, params, find);
     }
 
-    public static <T> Optional<List<T>> queryCustomNativeSql(Class<T> clase, EntityManager entityManager, String query) {
+    public static Optional<List<Object[]>> queryCustomNativeSql(EntityManager entityManager, String query) {
         //noinspection rawtypes
         Optional<List> listDefault = executeInTransaction(List.class, entityManager, query, nativeQuery);
+        //noinspection unchecked
+        return listDefault.map(list -> (List<Object[]>) list);
+    }
+
+    public static <T> Optional<List<T>> queryCustomJpql(Class<T> clase, EntityManager entityManager, String query) {
+        //noinspection rawtypes
+        Optional<List> listDefault = executeInTransaction(List.class, entityManager, query, jpqlQuery);
         //noinspection unchecked
         return listDefault.map(list -> (List<T>) list);
     }
@@ -154,21 +161,35 @@ public class EntityManagerCreator {
      * @param query         la consulta SQL nativa con parámetros con nombre (e.g., {@code :nombre}).
      * @param params        un {@link Map} que contiene los nombres de los parámetros y sus valores.
      *                      Las claves del mapa deben coincidir con los marcadores en la consulta.
-     * @return una {@link List<T>} de resultados de la consulta. Los resultados pueden ser
+     * @return una {@link List<Object[]>} de resultados de la consulta. Los resultados pueden ser
      *         entidades, arreglos de la clase de la Entidad, o valores escalares según la consulta.
      */
-    public static <T> Optional<List<T>> parametrizedQueryCustomNativeSql(Class<T> clase, EntityManager entityManager, String query, Map<String, Object> params) {
+    public static Optional<List<Object[]>> parametrizedQueryCustomNativeSql(EntityManager entityManager, String query, Map<String, Object> params) {
         Map<String, Object> queryAndParams = new TreeMap<>();
         queryAndParams.put(ParametrizedQueryMapKeys.QUERY, query);
         queryAndParams.put(ParametrizedQueryMapKeys.PARAMS, params);
         //noinspection rawtypes
         Optional<List> listDefault = executeInTransaction(List.class, entityManager, queryAndParams, parametrizedQuery);
         //noinspection unchecked
+        return listDefault.map(list -> (List<Object[]>) list);
+    }
+
+    public static <T> Optional<List<T>> parametrizedQueryJpql(Class<T> clase, EntityManager entityManager, String query, Map<String, Object> params) {
+        Map<String, Object> queryAndParams = new TreeMap<>();
+        queryAndParams.put(ParametrizedQueryMapKeys.QUERY, query);
+        queryAndParams.put(ParametrizedQueryMapKeys.PARAMS, params);
+        //noinspection rawtypes
+        Optional<List> listDefault = executeInTransaction(List.class, entityManager, queryAndParams, parametrizedJpqlQuery);
+        //noinspection unchecked
         return listDefault.map(list -> (List<T>) list);
     }
 
     public static boolean updateCustomNativeSql(EntityManager entityManager, String updateQuery) {
         return executeInTransaction(Boolean.class, entityManager, updateQuery, nativeUpdate).orElse(false);
+    }
+
+    public static boolean updateCustomJpql(EntityManager entityManager, String updateQuery) {
+        return executeInTransaction(Boolean.class, entityManager, updateQuery, jpqlUpdate).orElse(false);
     }
 
     // Transacciones agrupadas en TransactionManager
@@ -222,11 +243,26 @@ public class EntityManagerCreator {
         return em.createNativeQuery(query).getResultList();
     };
 
+    private static final BiFunction<EntityManager, String, List<Object>> jpqlQuery = (em, query) -> {
+        //noinspection unchecked
+        return em.createQuery(query).getResultList();
+    };
+
     private static final TriFunction<EntityManager, Object, Object, List<Object>> parametrizedQuery = (em, queryObj, paramsObj) -> {
         //noinspection unchecked
         Map<String, Object> params = (Map<String, Object>) paramsObj;
         String query = (String) queryObj;
         Query q = em.createNativeQuery(query);
+        params.forEach(q::setParameter);
+        //noinspection unchecked
+        return q.getResultList();
+    };
+
+    private static final TriFunction<EntityManager, Object, Object, List<Object>> parametrizedJpqlQuery = (em, queryObj, paramsObj) -> {
+        //noinspection unchecked
+        Map<String, Object> params = (Map<String, Object>) paramsObj;
+        String query = (String) queryObj;
+        Query q = em.createQuery(query);
         params.forEach(q::setParameter);
         //noinspection unchecked
         return q.getResultList();
@@ -242,4 +278,8 @@ public class EntityManagerCreator {
         em.createNativeQuery(query).executeUpdate();
     };
 
+    private static final BiConsumer<EntityManager, Object> jpqlUpdate = (em, queryObj) -> {
+        String query = (String) queryObj;
+        em.createQuery(query).executeUpdate();
+    };
 }
