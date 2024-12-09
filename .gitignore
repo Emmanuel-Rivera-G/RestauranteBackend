@@ -1,6 +1,9 @@
 # Ignore Gradle project-specific cache directory
 .gradle
 
+# Ignore enviroment variables
+**/.env
+
 # Ignore Gradle build output directory
 build
 
@@ -20,6 +23,6 @@ nbproject/private/
 *.zip
 *.tar.gz
 
-# Archivos específicos de tu proyecto
+# Archivos especï¿½ficos de tu proyecto
 */build/
 */target/
