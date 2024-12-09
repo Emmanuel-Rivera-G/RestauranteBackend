@@ -53,6 +53,13 @@ public class WebServer {
             .setBacklog(backlog)
             .setDefaultHostname();
     }
+
+    public WebServer(int port, String hostname) throws IOException {
+        this
+            .setPort(port)
+            .setDefaultBacklog()
+            .setHostname(hostname);
+    }
     
     public WebServer(boolean startServer, int port, int backlog, EntityManager entityManager) throws IOException {
         this(port, backlog);

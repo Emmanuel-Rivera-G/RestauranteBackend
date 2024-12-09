@@ -23,8 +23,8 @@ public class EntityManagerCreator {
 
     private final EntityManager entityManager;
 
-    public EntityManagerCreator() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("RestauranteBackend_unit");
+    public EntityManagerCreator(Map<String, String> properties) {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("RestauranteBackend_unit", properties);
         this.entityManager = entityManagerFactory.createEntityManager();
     }
 
